@@ -32,6 +32,10 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      # prisma.config.ts and api typecheck need DATABASE_URL; generated client is gitignored
+      - name: Prepare env
+        run: cp .env.example .env
+
       - name: Lint
         run: pnpm lint
 
@@ -55,6 +59,9 @@ jobs:
 
       - name: Install
         run: pnpm install --frozen-lockfile
+
+      - name: Prepare env
+        run: cp .env.example .env
 
       - name: Start dev infra
         run: pnpm infra:up
@@ -97,6 +104,31 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Prepare env
+        run: cp .env.example .env
+
+      # nest start resolves @ddcrm/shared from dist; prisma client is gitignored
+      - name: Build shared + generate Prisma client
+        run: |
+          pnpm --filter @ddcrm/shared build
+          pnpm --filter @ddcrm/api prisma:generate
+
+      - name: Start dev infra
+        run: pnpm infra:up
+
+      - name: Wait for Postgres
+        run: |
+          for _ in $(seq 1 60); do
+            if docker compose -f infra/docker-compose.dev.yml exec -T postgres pg_isready -U ddcrm -d ddcrm; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Deploy migrations
+        run: pnpm db:deploy
+
       - name: Install Playwright browsers
         run: pnpm --filter @ddcrm/web exec playwright install --with-deps chromium
 
@@ -104,6 +136,10 @@ jobs:
         run: pnpm --filter @ddcrm/web test:e2e
         env:
           CI: true
+
+      - name: Stop infra
+        if: always()
+        run: pnpm infra:down
 
   docker:
     name: Build Docker images
