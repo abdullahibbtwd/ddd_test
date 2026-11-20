@@ -1,0 +1,27 @@
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+db_engine = "sqlite"
+
+replication_factor = 1
+
+rpc_bind_addr = "[::]:3901"
+rpc_public_addr = "garage:3901"
+# 32-byte hex. Regenerate before a real VPS deploy: openssl rand -hex 32
+rpc_secret = "9f3c1a7e2b4d6c8e0a1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef"
+
+[s3_api]
+s3_region = "garage"
+api_bind_addr = "[::]:3900"
+root_domain = ".s3.garage.internal"
+public_endpoint = "http://garage:3900"
+
+[s3_web]
+bind_addr = "[::]:3902"
+root_domain = ".web.garage.internal"
+index = "index.html"
+
+[admin]
+api_bind_addr = "[::]:3903"
+# Regenerate before a real VPS deploy.
+admin_token = "ddcrm-local-prod-admin-token-change-me"
+metrics_token = "ddcrm-local-prod-metrics-token-change-me"

@@ -1,0 +1,210 @@
+@import "./fonts.css";
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   DD CRM design tokens (CSS-first, Tailwind v4).
+   Light theme only. No dark mode, no gradients, no glow.
+   Shadows exist ONLY for drawer / dialogs (--shadow-overlay).
+   Accent is reserved for: primary buttons, active nav, focus rings, links.
+   ------------------------------------------------------------------ */
+
+:root {
+  --bg: #f6f7f8;
+  --surface: #ffffff;
+  --border: #e5e7eb;
+  --ink: #111827;
+  --ink-muted: #6b7280;
+
+  --accent: #1f6f54;
+  --accent-hover: #185a44;
+  --accent-tint: #e8f1ed;
+  --on-accent: #ffffff;
+
+  --ok-bg: #e6efe9;
+  --ok-ink: #2f6b4f;
+  --warn-bg: #f8eed7;
+  --warn-ink: #8a5a12;
+  --bad-bg: #f5e1e1;
+  --bad-ink: #9b3b3b;
+  --neutral-bg: #eef0f3;
+  --neutral-ink: #4b5563;
+}
+
+@theme inline {
+  /* Drop Tailwind's default palette & shadows: only tokens are available. */
+  --color-*: initial;
+  --shadow-*: initial;
+
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-tint: var(--accent-tint);
+  --color-on-accent: var(--on-accent);
+  --color-ok-bg: var(--ok-bg);
+  --color-ok-ink: var(--ok-ink);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-ink: var(--warn-ink);
+  --color-bad-bg: var(--bad-bg);
+  --color-bad-ink: var(--bad-ink);
+  --color-neutral-bg: var(--neutral-bg);
+  --color-neutral-ink: var(--neutral-ink);
+
+  /* 6px inputs / buttons / tables, 8px drawer / dialogs */
+  --radius-control: 6px;
+  --radius-panel: 8px;
+
+  --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* Drawer & dialogs only. */
+  --shadow-overlay: 0 8px 28px rgb(17 24 39 / 0.14);
+
+  --animate-overlay-in: overlay-in 140ms ease-out;
+  --animate-overlay-out: overlay-out 120ms ease-in;
+  --animate-drawer-in: drawer-in 180ms ease-out;
+  --animate-drawer-out: drawer-out 140ms ease-in;
+  --animate-drawer-left-in: drawer-left-in 180ms ease-out;
+  --animate-drawer-left-out: drawer-left-out 140ms ease-in;
+  --animate-dialog-in: dialog-in 140ms ease-out;
+  --animate-dialog-out: dialog-out 110ms ease-in;
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes overlay-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes drawer-left-in {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes drawer-left-out {
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes drawer-out {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+}
+@keyframes dialog-out {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--accent-tint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------------- Type scale ---------------- */
+
+/* page title: 24px / 600 / -0.02em */
+@utility type-page-title {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+/* section header: 15px / 600 */
+@utility type-section {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+/* body & table cells: 14px / 400 / lh 1.5 */
+@utility type-body {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* table headers & micro-labels: 12px / 500 / +0.04em, muted, normal case */
+@utility label {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--ink-muted);
+}
+
+/* numbers: JetBrains Mono + tabular figures */
+@utility num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

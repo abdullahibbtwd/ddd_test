@@ -1,0 +1,211 @@
+# Production-like stack. ONLY Caddy publishes ports (80/443).
+# Config: copy .env.production.example → .env.production and fill CHANGE_ME values.
+# Usage:
+#   docker compose -f infra/docker-compose.yml --env-file .env.production up -d --build
+# First-time Garage: ./infra/garage/init-prod.sh
+
+name: ddcrm
+
+services:
+  postgres:
+    image: postgres:18.7-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  redis:
+    image: redis:8.10.3-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  garage:
+    image: dxflrs/garage:v2.5.0
+    restart: unless-stopped
+    # No --default-bucket: layout / bucket / key come from infra/garage/init-prod.sh
+    command: ["/garage", "server"]
+    volumes:
+      - ./garage/garage.prod.toml:/etc/garage.toml:ro
+      - garage_meta:/var/lib/garage/meta
+      - garage_data:/var/lib/garage/data
+    networks: [internal]
+    healthcheck:
+      # `garage status` exits 0 once the process is up (layout may still be pending).
+      test: ["CMD", "/garage", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  gotenberg:
+    image: gotenberg/gotenberg:9.8.0
+    restart: unless-stopped
+    # Chromium inside Gotenberg can spike RAM on heavy HTML; cap so a stuck
+    # render cannot OOM the host.
+    mem_limit: 1g
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  migrate:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    image: ddcrm-api:local
+    restart: "no"
+    command: ["prisma", "migrate", "deploy"]
+    env_file: [../.env.production]
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [internal]
+
+  api:
+    image: ddcrm-api:local
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    command: ["node", "dist/main.js"]
+    env_file: [../.env.production]
+    environment:
+      NODE_ENV: production
+      API_PORT: 3000
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-1}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379
+      S3_ENDPOINT: http://garage:3900
+      GOTENBERG_URL: http://gotenberg:3000
+      # Same-origin via Caddy; CORS still needs the public origin.
+      CORS_ORIGIN: ${CORS_ORIGIN}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      garage:
+        condition: service_healthy
+      gotenberg:
+        condition: service_healthy
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  worker:
+    image: ddcrm-api:local
+    restart: unless-stopped
+    command: ["node", "dist/worker.js"]
+    env_file: [../.env.production]
+    environment:
+      NODE_ENV: production
+      API_PORT: 3000
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-1}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379
+      S3_ENDPOINT: http://garage:3900
+      GOTENBERG_URL: http://gotenberg:3000
+      CORS_ORIGIN: ${CORS_ORIGIN}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      garage:
+        condition: service_healthy
+      gotenberg:
+        condition: service_healthy
+    networks: [internal]
+    # Worker has no HTTP server; process liveness only.
+    healthcheck:
+      test: ["CMD-SHELL", "kill -0 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+
+  web:
+    image: ddcrm-web:local
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  caddy:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
+      # Set to `auto_https off` for local plain-HTTP testing (see .env.production.example).
+      CADDY_AUTO_HTTPS: ${CADDY_AUTO_HTTPS:-}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  garage_meta:
+  garage_data:
+  caddy_data:
+  caddy_config:

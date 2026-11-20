@@ -1,0 +1,12 @@
+node_modules
+dist
+.turbo
+.env
+.env.production
+*.log
+.DS_Store
+coverage
+apps/web/test-results
+apps/web/playwright-report
+
+apps/api/src/generated

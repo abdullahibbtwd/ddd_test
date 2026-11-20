@@ -1,0 +1,12 @@
+{
+  "primary": "Основна навигация",
+  "dashboard": "Табло",
+  "clients": "Клиенти",
+  "visits": "Посещения",
+  "invoices": "Фактури",
+  "payments": "Плащания",
+  "certificates": "Сертификати",
+  "agreements": "Договори",
+  "reports": "Справки",
+  "settings": "Настройки"
+}

@@ -1,0 +1,77 @@
+{
+  "tab": "Журнал",
+  "title": "Настройки",
+  "empty": "Няма записи в журнала.",
+  "emDash": "—",
+  "filters": {
+    "user": "Потребител",
+    "userPlaceholder": "Всички потребители",
+    "action": "Действие",
+    "actionPlaceholder": "Всички действия",
+    "entityType": "Тип обект",
+    "entityTypePlaceholder": "Всички типове",
+    "from": "От дата",
+    "to": "До дата"
+  },
+  "columns": {
+    "time": "Време",
+    "user": "Потребител",
+    "action": "Действие",
+    "entity": "Обект",
+    "record": "Запис"
+  },
+  "drawer": {
+    "title": "Запис в журнала",
+    "who": "Кой",
+    "when": "Кога",
+    "source": "Източник",
+    "requestId": "Request id",
+    "field": "Поле",
+    "before": "Преди",
+    "after": "След",
+    "value": "Стойност",
+    "masked": "скрито",
+    "system": "Система",
+    "noChanges": "Няма променени полета."
+  },
+  "actions": {
+    "CREATE": "Създаване",
+    "UPDATE": "Промяна",
+    "DELETE": "Изтриване",
+    "LOGIN_SUCCESS": "Успешен вход",
+    "LOGIN_FAILED": "Неуспешен вход",
+    "LOGOUT": "Изход",
+    "PASSWORD_CHANGED": "Смяна на парола",
+    "PASSWORD_RESET_BY_ADMIN": "Нулиране на парола от администратор",
+    "ACCOUNT_LOCKED": "Заключен акаунт",
+    "REFRESH_REUSE_DETECTED": "Повторна употреба на refresh токен"
+  },
+  "entityTypes": {
+    "users": "Потребител",
+    "auth_sessions": "Сесия",
+    "audit_log": "Журнал",
+    "areas": "Район",
+    "user_areas": "Район на потребител"
+  },
+  "sources": {
+    "api": "API",
+    "worker": "Worker",
+    "cli": "CLI",
+    "system": "Система"
+  },
+  "fields": {
+    "email": "Имейл",
+    "name": "Име",
+    "phone": "Телефон",
+    "role": "Роля",
+    "password_hash": "Парола",
+    "is_active": "Активен",
+    "must_change_password": "Задължителна смяна на парола",
+    "failed_login_count": "Неуспешни опити",
+    "locked_until": "Заключен до",
+    "last_login_at": "Последен вход",
+    "password_changed_at": "Паролата сменена на",
+    "created_at": "Създаден на",
+    "updated_at": "Обновен на"
+  }
+}

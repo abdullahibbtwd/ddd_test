@@ -1,0 +1,42 @@
+# VCS / IDE
+.git
+.github
+.cursor
+.vscode
+.idea
+
+# Env and secrets — never bake into images
+.env
+.env.*
+!.env.example
+!.env.production.example
+**/.env
+**/.env.*
+
+# Dependencies and build outputs (rebuilt inside Docker)
+node_modules
+**/node_modules
+dist
+**/dist
+.turbo
+**/.turbo
+coverage
+**/coverage
+
+# Tests / local artefacts
+**/test-results
+**/playwright-report
+tmp
+*.log
+.DS_Store
+
+# Docs are not needed to build app images
+docs
+README.md
+
+# Dev-only compose and local tooling
+infra/docker-compose.dev.yml
+apps/web/e2e
+**/*.spec.ts
+**/*.test.ts
+**/*.test.tsx

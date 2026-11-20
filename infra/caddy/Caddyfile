@@ -1,0 +1,35 @@
+# SITE_ADDRESS: hostname or :port (e.g. localhost, :80, crm.example.com).
+# For local plain HTTP set CADDY_AUTO_HTTPS=off (Compose env). Leave unset for
+# real domains so Caddy can issue certificates. Do not put http:// in SITE_ADDRESS —
+# dotenv/Compose treat "://" awkwardly in unquoted env values.
+{
+	admin off
+	{$CADDY_AUTO_HTTPS:}
+}
+
+{$SITE_ADDRESS:localhost} {
+	encode gzip zstd
+
+	# HSTS only when not serving plain localhost / loopback over HTTP.
+	@real_domain not host localhost 127.0.0.1
+	header @real_domain Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		# Works with the Vite/PWA app shell (self-hosted fonts, SW, same-origin API).
+		Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'"
+		-Server
+	}
+
+	# API (includes Bull Board at /api/admin/queues) → api service (never the SPA)
+	@backend path /api/*
+	handle @backend {
+		reverse_proxy api:3000
+	}
+
+	# Everything else → static web
+	handle {
+		reverse_proxy web:8080
+	}
+}

@@ -1,0 +1,31 @@
+{
+  "tab": "Райони",
+  "empty": "Няма райони.",
+  "newArea": "Нов район",
+  "filters": {
+    "search": "Търсене",
+    "searchPlaceholder": "Име на район",
+    "status": "Статус",
+    "statusAll": "Всички",
+    "active": "Активни",
+    "inactive": "Неактивни"
+  },
+  "columns": {
+    "name": "Име",
+    "users": "Потребители",
+    "status": "Статус"
+  },
+  "status": {
+    "active": "Активен",
+    "inactive": "Неактивен"
+  },
+  "drawer": {
+    "createTitle": "Нов район",
+    "editTitle": "Редакция на район",
+    "name": "Име",
+    "active": "Активен",
+    "assignedUsers": "Назначени потребители",
+    "noAssignedUsers": "Няма назначени потребители.",
+    "userRole": "({{role}})"
+  }
+}

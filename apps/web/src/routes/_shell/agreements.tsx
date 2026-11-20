@@ -1,0 +1,6 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { SectionPlaceholder } from "@/pages/section-placeholder";
+
+export const Route = createFileRoute("/_shell/agreements")({
+  component: () => <SectionPlaceholder section="agreements" />,
+});

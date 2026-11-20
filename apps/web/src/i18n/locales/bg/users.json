@@ -1,0 +1,66 @@
+{
+  "tab": "Потребители",
+  "empty": "Няма потребители.",
+  "newUser": "Нов потребител",
+  "filters": {
+    "search": "Търсене",
+    "searchPlaceholder": "Име или имейл",
+    "role": "Роля",
+    "roleAll": "Всички роли",
+    "status": "Статус",
+    "statusAll": "Всички",
+    "area": "Район",
+    "areaAll": "Всички райони"
+  },
+  "columns": {
+    "name": "Име",
+    "role": "Роля",
+    "areas": "Райони",
+    "phone": "Телефон",
+    "lastLogin": "Последен вход",
+    "status": "Статус"
+  },
+  "roles": {
+    "ADMIN": "Администратор",
+    "OFFICE": "Офис",
+    "FIELD": "Терен"
+  },
+  "status": {
+    "active": "Активен",
+    "inactive": "Неактивен"
+  },
+  "areasSummary": "{{count}} района",
+  "emDash": "—",
+  "drawer": {
+    "createTitle": "Нов потребител",
+    "editTitle": "Редакция на потребител",
+    "name": "Име",
+    "email": "Имейл",
+    "phone": "Телефон",
+    "role": "Роля",
+    "areas": "Райони",
+    "noAreasHint": "Няма зададени райони — потребителят не вижда обекти",
+    "actionsSection": "Действия",
+    "resetPassword": "Нулиране на парола",
+    "deactivate": "Деактивиране",
+    "activate": "Активиране",
+    "selfModificationHint": "Не можете да промените собствената си роля или да деактивирате собствения си акаунт."
+  },
+  "confirm": {
+    "resetPasswordTitle": "Нулиране на парола?",
+    "resetPasswordDescription": "Ще бъде генерирана нова временна парола за {{name}}.",
+    "deactivateTitle": "Деактивиране на потребител?",
+    "deactivateDescription": "{{name}} няма да може да влезе в системата.",
+    "activateTitle": "Активиране на потребител?",
+    "activateDescription": "{{name}} отново ще може да влезе в системата."
+  },
+  "tempPassword": {
+    "title": "Временна парола",
+    "email": "Имейл",
+    "password": "Парола",
+    "copy": "Копирай",
+    "copied": "Копирано",
+    "hint": "Паролата се показва само веднъж.",
+    "done": "Готово"
+  }
+}
