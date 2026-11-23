@@ -31,7 +31,7 @@ import { UsersService } from "./users.service";
 export class UsersController {
   constructor(@Inject(UsersService) private readonly usersService: UsersService) {}
 
-  @Can("manage", "User")
+  @Can("read", "User")
   @ApiQuery({ name: "page", required: false, type: Number })
   @ApiQuery({ name: "pageSize", required: false, type: Number })
   @ApiQuery({ name: "search", required: false, type: String })

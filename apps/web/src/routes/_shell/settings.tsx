@@ -17,14 +17,17 @@ function SettingsLayout() {
   const { t: tAudit } = useTranslation("audit");
   const { t: tUsers } = useTranslation("users");
   const { t: tAreas } = useTranslation("areas");
+  const { t: tSites } = useTranslation("sites");
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const tab = pathname.includes("/settings/areas")
     ? "areas"
-    : pathname.includes("/settings/audit")
-      ? "audit"
-      : "users";
+    : pathname.includes("/settings/site-types")
+      ? "site-types"
+      : pathname.includes("/settings/audit")
+        ? "audit"
+        : "users";
 
   return (
     <div>
@@ -34,6 +37,7 @@ function SettingsLayout() {
         onValueChange={(value) => {
           if (value === "users") void navigate({ to: "/settings/users" });
           else if (value === "areas") void navigate({ to: "/settings/areas" });
+          else if (value === "site-types") void navigate({ to: "/settings/site-types" });
           else if (value === "audit") void navigate({ to: "/settings/audit" });
         }}
       >
@@ -43,6 +47,9 @@ function SettingsLayout() {
           </Can>
           <Can I="manage" a="Area">
             <TabsTrigger value="areas">{tAreas("tab")}</TabsTrigger>
+          </Can>
+          <Can I="manage" a="SiteType">
+            <TabsTrigger value="site-types">{tSites("tab")}</TabsTrigger>
           </Can>
           <Can I="read" a="AuditLog">
             <TabsTrigger value="audit">{tAudit("tab")}</TabsTrigger>

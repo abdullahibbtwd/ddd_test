@@ -25,10 +25,9 @@ export const Route = createFileRoute("/_shell")({
       throw redirect({ to: homePathForRole(user.role) });
     }
 
-    // FIELD home is /visits — send bare `/` there even though canAccessPath
-    // treats unknown paths as allowed; `/` is in nav and denied for FIELD.
+    // FIELD home is /sites until Visits (Phase 5) — send bare `/` there.
     if (path === "/" && user.role === "FIELD") {
-      throw redirect({ to: "/visits" });
+      throw redirect({ to: "/sites" });
     }
 
     return { user };

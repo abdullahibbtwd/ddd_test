@@ -51,7 +51,39 @@
     "auth_sessions": "Сесия",
     "audit_log": "Журнал",
     "areas": "Район",
-    "user_areas": "Район на потребител"
+    "user_areas": "Район на потребител",
+    "clients": "Клиент",
+    "sites": "Обект",
+    "site_types": "Вид обект",
+    "subscriptions": "Абонамент",
+    "visits": "Посещение",
+    "visit_employees": "Служител на посещение"
+  },
+  "enums": {
+    "SubscriptionFrequency": {
+      "MONTHLY": "Всеки месец",
+      "EVERY_2_MONTHS": "На всеки 2 месеца",
+      "QUARTERLY": "На всеки 3 месеца",
+      "ON_DEMAND": "При заявка"
+    },
+    "ServiceType": {
+      "INSECT_CONTROL": "Дезинсекция",
+      "RODENT_CONTROL": "Дератизация",
+      "DISINFECTION": "Дезинфекция",
+      "OTHER": "Друго"
+    },
+    "SiteStatus": {
+      "ACTIVE": "Активен",
+      "TERMINATED": "Прекратен"
+    },
+    "VisitStatus": {
+      "ACTIVE": "Активно",
+      "CANCELLED": "Анулирано"
+    },
+    "EmployeeRoleOnVisit": {
+      "LEAD": "Водещ",
+      "ASSIST": "Асистент"
+    }
   },
   "sources": {
     "api": "API",
@@ -72,6 +104,45 @@
     "last_login_at": "Последен вход",
     "password_changed_at": "Паролата сменена на",
     "created_at": "Създаден на",
-    "updated_at": "Обновен на"
+    "updated_at": "Обновен на",
+    "kind": "Тип",
+    "name_normalized": "Нормализирано име",
+    "eik": "ЕИК",
+    "vat_number": "ДДС номер",
+    "registered_address": "Адрес по регистрация",
+    "legal_representative": "МОЛ",
+    "preferred_payment_method": "Начин на плащане",
+    "notes": "Бележки",
+    "client_id": "Клиент",
+    "area_id": "Район",
+    "site_type_id": "Вид обект",
+    "address": "Адрес",
+    "latitude": "Географска ширина",
+    "longitude": "Географска дължина",
+    "contact_person": "Лице за контакт",
+    "contact_phone": "Телефон за контакт",
+    "floor_area_m2": "Квадратура",
+    "monitoring_points_count": "Брой точки",
+    "status": "Статус",
+    "terminated_at": "Прекратен на",
+    "site_id": "Обект",
+    "services": "Услуги",
+    "frequency": "Честота",
+    "rate": "Цена",
+    "rate_includes_vat": "Цената включва ДДС",
+    "start_date": "Начална дата",
+    "end_date": "Крайна дата",
+    "visit_date": "Дата на посещение",
+    "treatment_type": "Вид услуга",
+    "charged_amount": "Таксувана сума",
+    "subscription_id": "Абонамент",
+    "cancelled_at": "Анулирано на",
+    "cancelled_by": "Анулирано от",
+    "cancel_reason": "Причина за анулиране",
+    "created_by": "Създадено от",
+    "client_mutation_id": "Идемпотентен ключ",
+    "visit_id": "Посещение",
+    "user_id": "Потребител",
+    "role_on_visit": "Роля на посещението"
   }
 }

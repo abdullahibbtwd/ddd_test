@@ -95,6 +95,10 @@ trusts exactly that many peers from the socket side — equivalent to “exactly
 hops”. With Caddy in front, `auth_sessions.ip` and throttle buckets see the real
 client, not Caddy’s container IP.
 
+## Geolocation (Sites map picker)
+
+Browser geolocation (`navigator.geolocation`) only works on **HTTPS** or **localhost**. Plain HTTP on a LAN IP will deny permission. Production must terminate TLS at Caddy (or another reverse proxy) for «Използвай моето местоположение» to work for field users.
+
 ## What is not included
 
 - Automated backups / restore drills (go-live phase)

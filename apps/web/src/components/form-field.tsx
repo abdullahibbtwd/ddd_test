@@ -29,7 +29,12 @@ export function FormField({ label, children, hint, error, required, className }:
     <div className={cn("flex flex-col gap-1.5", className)}>
       <Label htmlFor={controlId}>
         {label}
-        {required ? <span className="label ml-1.5">{t("form.required")}</span> : null}
+        {required ? (
+          <>
+            {" "}
+            <span className="label">{t("form.required")}</span>
+          </>
+        ) : null}
       </Label>
       {cloneElement(children, {
         id: controlId,

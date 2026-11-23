@@ -36,9 +36,10 @@ describe("NavList role filtering", () => {
     render(<NavList role={Role.FIELD} />);
     const nav = screen.getByRole("navigation", { name: "Основна навигация" });
     const links = within(nav).getAllByRole("link");
-    expect(links).toHaveLength(3);
+    expect(links).toHaveLength(4);
     expect(links.map((l) => l.textContent)).toEqual([
-      i18n.t("visits", { ns: "nav" }),
+      i18n.t("sites", { ns: "nav" }),
+      i18n.t("month", { ns: "nav" }),
       i18n.t("invoices", { ns: "nav" }),
       i18n.t("payments", { ns: "nav" }),
     ]);

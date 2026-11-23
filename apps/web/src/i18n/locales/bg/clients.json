@@ -1,0 +1,90 @@
+{
+  "title": "Клиенти",
+  "empty": "Няма клиенти.",
+  "newClient": "Нов клиент",
+  "emDash": "—",
+  "open": "Отвори",
+  "filters": {
+    "search": "Търсене",
+    "searchPlaceholder": "Име, ЕИК, телефон или имейл",
+    "kind": "Тип",
+    "kindAll": "Всички",
+    "kindCompany": "Фирма",
+    "kindIndividual": "Физическо лице",
+    "status": "Статус",
+    "statusActive": "Активни",
+    "statusArchived": "Архивирани",
+    "statusAll": "Всички"
+  },
+  "columns": {
+    "name": "Име",
+    "eik": "ЕИК",
+    "kind": "Тип",
+    "phone": "Телефон",
+    "sites": "Обекти",
+    "status": "Статус"
+  },
+  "tabs": {
+    "data": "Данни",
+    "sites": "Обекти"
+  },
+  "sitesTab": {
+    "empty": "Няма обекти за този клиент.",
+    "newSite": "Нов обект"
+  },
+  "kind": {
+    "COMPANY": "Фирма",
+    "INDIVIDUAL": "Физическо лице"
+  },
+  "status": {
+    "active": "Активен",
+    "archived": "Архивиран"
+  },
+  "paymentMethod": {
+    "CASH": "В брой",
+    "BANK_TRANSFER": "Банков превод",
+    "CARD": "Карта",
+    "OTHER": "Друго",
+    "none": "—"
+  },
+  "drawer": {
+    "createTitle": "Нов клиент",
+    "editTitle": "Редакция на клиент",
+    "sectionBasics": "Основни данни",
+    "sectionContacts": "Контакти и плащане",
+    "kind": "Тип",
+    "nameCompany": "Наименование",
+    "nameIndividual": "Име",
+    "eik": "ЕИК",
+    "vatNumber": "ДДС номер",
+    "registeredAddress": "Адрес по регистрация",
+    "legalRepresentative": "МОЛ",
+    "phone": "Телефон",
+    "email": "Имейл",
+    "paymentMethod": "Начин на плащане",
+    "paymentMethodNone": "Без предпочитание",
+    "notes": "Бележки",
+    "actionsSection": "Действия",
+    "archive": "Архивирай",
+    "activate": "Активирай"
+  },
+  "validation": {
+    "nameRequired": "Името е задължително.",
+    "eikRequired": "ЕИК е задължителен за фирми.",
+    "eikInvalid": "Невалиден ЕИК.",
+    "vatInvalid": "Невалиден ДДС номер (BG + 9 или 10 цифри).",
+    "emailInvalid": "Невалиден имейл.",
+    "phoneInvalid": "Невалиден телефон."
+  },
+  "duplicates": {
+    "sameEik": "Клиент с този ЕИК вече съществува: {{name}}",
+    "similarTitle": "Възможни дубликати по име:",
+    "similarItem": "{{name}} · {{eik}}"
+  },
+  "confirm": {
+    "archiveTitle": "Архивиране на клиент?",
+    "archiveDescription": "{{name}} ще бъде архивиран и скрит от списъка с активни клиенти.",
+    "activateTitle": "Активиране на клиент?",
+    "activateDescription": "{{name}} отново ще бъде активен."
+  }
+}

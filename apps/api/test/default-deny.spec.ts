@@ -174,6 +174,18 @@ describe("default-deny (every route requires auth unless allowlisted)", () => {
     expect(checked.some((l) => l.includes("GET /api/audit-log"))).toBe(true);
     expect(checked.some((l) => l.startsWith("GET /api/users"))).toBe(true);
     expect(checked.some((l) => l.startsWith("GET /api/areas"))).toBe(true);
+    expect(checked.some((l) => l.startsWith("GET /api/sites"))).toBe(true);
+    expect(checked.some((l) => l.startsWith("GET /api/sites/map"))).toBe(true);
+    expect(checked.some((l) => l.startsWith("GET /api/site-types"))).toBe(true);
+    expect(checked.some((l) => l.startsWith("GET /api/scheduling/month"))).toBe(
+      true,
+    );
+    expect(
+      checked.some((l) => l.startsWith("GET /api/scheduling/month/days")),
+    ).toBe(true);
+    // Full route inventory is written to apps/api/test/default-deny-routes.txt
+    // and printed below for the Task 14 evidence report.
+    console.log("\n--- default-deny route list ---\n" + checked.join("\n") + "\n");
   });
 
   it("Bull Board hook: GET /api/admin/queues without cookie → 401", async () => {

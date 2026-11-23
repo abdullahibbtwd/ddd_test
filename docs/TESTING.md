@@ -7,7 +7,46 @@
 | Unit | `apps/api/test/*.spec.ts`, `apps/web/src/**/__tests__` | nothing |
 | Integration (shared infra) | e.g. `extensions.spec.ts`, `queues.spec.ts`, `storage.spec.ts` | `pnpm infra:up` |
 | Integration (disposable DB) | `apps/api/test/helpers/*.spec.ts` | Docker (Testcontainers) |
-| E2E | `apps/web/e2e` | Playwright (starts Vite itself) |
+| E2E | `apps/web/e2e` | Playwright (starts its own API + Vite) |
+
+## Playwright servers
+
+Playwright **always starts its own** API and Vite processes (`reuseExistingServer: false`) so a stale local `pnpm dev` API without `E2E=1` cannot cause login throttling flakes.
+
+Opt in to reuse an already-running stack for local debugging:
+
+```bash
+PW_REUSE=1 pnpm --filter @ddcrm/web test:e2e
+```
+
+The API webServer entry still sets `E2E=1` on the process it starts (skips Nest throttling).
+
+## E2E data: unique names + search
+
+Any Playwright test that **creates** rows (clients, sites, areas, users, site types, …) must:
+
+1. Give the new row a **unique name** (timestamp and/or random suffix).
+2. **Find it through the search filter** (or an exact unique email/EIK lookup), never by list/table position or “first row”.
+
+Lists are paginated and sorted; position-based lookups flake once enough seed/prior-run data exists. Shared helpers live under `apps/web/e2e/`; import `test` / `expect` from `./fixtures` so the console/`/api` guard is on.
+
+## Console / network guard
+
+`apps/web/e2e/fixtures.ts` fails a test on unexpected `console.error`, uncaught `pageerror`, or same-origin `/api` responses with status ≥ 400.
+
+Always allowed: `401` on `/api/auth/me` (SPA session probe before login / after logout). Allow other expected failures per test:
+
+```ts
+test.use({
+  consoleGuard: {
+    allowApiFailures: [{ status: 401, url: /\/api\/auth\/login/ }],
+  },
+});
+```
+
+## Performance database
+
+Perf seeds (`seed-perf-clients.ts`, `seed-perf-sites.ts`) use a **separate** Postgres database `ddcrm_perf` (or `PERF_DATABASE_URL`). They create it if needed, migrate, run timings/EXPLAIN, then **drop** it unless `PERF_KEEP=1`. They must not write into the shared e2e/dev database.
 
 ## Database helper (Testcontainers)
 

@@ -10,12 +10,14 @@ import {
   Users,
   CalendarCheck,
   Award,
+  MapPinned,
 } from "lucide-react";
 
 export type NavPath =
   | "/"
   | "/clients"
-  | "/visits"
+  | "/sites"
+  | "/month"
   | "/invoices"
   | "/payments"
   | "/certificates"
@@ -26,7 +28,8 @@ export type NavPath =
 export type NavKey =
   | "dashboard"
   | "clients"
-  | "visits"
+  | "sites"
+  | "month"
   | "invoices"
   | "payments"
   | "certificates"
@@ -44,18 +47,21 @@ export interface NavItem {
 }
 
 const ADMIN_OFFICE: readonly Role[] = [Role.ADMIN, Role.OFFICE];
+const ALL_ROLES: readonly Role[] = [Role.ADMIN, Role.OFFICE, Role.FIELD];
 const FIELD_MONEY: readonly Role[] = [Role.ADMIN, Role.OFFICE, Role.FIELD];
 
 /**
- * Role visibility (Task 7):
+ * Role visibility (Task 14):
  * - ADMIN: all items
  * - OFFICE: all except Настройки
- * - FIELD: Посещения, Фактури, Плащания only
+ * - FIELD: Обекти, Този месец, Фактури, Плащания (home = /sites)
+ * Visit create/edit stays on /visits/new and /visits/:id/edit (not in nav).
  */
 export const NAV_ITEMS: readonly NavItem[] = [
   { key: "dashboard", path: "/", icon: LayoutDashboard, roles: ADMIN_OFFICE },
   { key: "clients", path: "/clients", icon: Users, roles: ADMIN_OFFICE },
-  { key: "visits", path: "/visits", icon: CalendarCheck, roles: FIELD_MONEY },
+  { key: "sites", path: "/sites", icon: MapPinned, roles: ALL_ROLES },
+  { key: "month", path: "/month", icon: CalendarCheck, roles: ALL_ROLES },
   { key: "invoices", path: "/invoices", icon: FileText, roles: FIELD_MONEY },
   { key: "payments", path: "/payments", icon: Wallet, roles: FIELD_MONEY },
   { key: "certificates", path: "/certificates", icon: Award, roles: ADMIN_OFFICE },
@@ -68,10 +74,10 @@ export function navItemsForRole(role: Role): readonly NavItem[] {
   return NAV_ITEMS.filter((item) => item.roles.includes(role));
 }
 
-export type HomePath = "/" | "/visits";
+export type HomePath = "/" | "/sites";
 
 export function homePathForRole(role: Role): HomePath {
-  return role === Role.FIELD ? "/visits" : "/";
+  return role === Role.FIELD ? "/sites" : "/";
 }
 
 export function canAccessPath(role: Role, path: string): boolean {

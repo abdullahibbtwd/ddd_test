@@ -1,0 +1,47 @@
+{
+  "title": "Посещения",
+  "new": "Ново посещение",
+  "editTitle": "Редакция на посещение",
+  "createTitle": "Ново посещение",
+  "empty": "Няма записани посещения.",
+  "cancelled": "Анулирано",
+  "save": "Запази",
+  "cancelVisit": "Анулирай посещението",
+  "cancelTitle": "Анулиране на посещение?",
+  "cancelDescription": "Посещението ще остане в историята, но ще бъде маркирано като анулирано.",
+  "cancelReason": "Причина",
+  "cancelReasonRequired": "Въведете причина (поне 3 символа).",
+  "cancelConfirm": "Анулирай",
+  "fields": {
+    "site": "Обект",
+    "date": "Дата",
+    "treatmentType": "Вид услуга",
+    "employees": "Служители",
+    "amount": "Сума",
+    "rateIncludesVat": "Сумата включва ДДС",
+    "notes": "Бележки"
+  },
+  "treatmentTypes": {
+    "INSECT_CONTROL": "Дезинсекция",
+    "RODENT_CONTROL": "Дератизация",
+    "DISINFECTION": "Дезинфекция",
+    "OTHER": "Друго"
+  },
+  "roles": {
+    "LEAD": "Водещ",
+    "ASSIST": "Асистент"
+  },
+  "validation": {
+    "amountRequired": "Въведете сума за еднократно посещение.",
+    "amountInvalid": "Въведете валидна сума.",
+    "dateRequired": "Датата е задължителна.",
+    "leadRequired": "Трябва да има точно един водещ служител.",
+    "employeesRequired": "Изберете поне един служител."
+  },
+  "fromSubscription": "Копирана от текущия абонамент",
+  "leadSuffix": "({{role}})",
+  "loading": "…",
+  "notFound": "Посещението не беше намерено.",
+  "siteNotFound": "Обектът не беше намерен.",
+  "back": "Назад"
+}

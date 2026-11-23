@@ -31,8 +31,10 @@ export default defineConfig({
       command: `pnpm --filter @ddcrm/api exec nest start`,
       url: `http://localhost:${API_PORT}/api/health`,
       // Always start with E2E=1 so login throttle does not flake the suite.
-      // Local: reuse when `pnpm dev` / nest already listens on :3000 (set E2E=1 on that process).
-      reuseExistingServer: !process.env.CI,
+      // Default: start a fresh API (reuseExistingServer false) so a stale dev
+      // server without E2E=1 cannot cause login throttling failures.
+      // Opt in to reuse with PW_REUSE=1 for local debugging against an existing stack.
+      reuseExistingServer: process.env.PW_REUSE === "1",
       timeout: 180_000,
       cwd: "../..",
       env: { ...process.env, E2E: "1" },
@@ -41,7 +43,7 @@ export default defineConfig({
       // Dev server: /dev/styleguide only exists outside production.
       command: `pnpm exec vite --port ${PORT} --strictPort`,
       url: `http://localhost:${PORT}`,
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: process.env.PW_REUSE === "1",
       timeout: 120_000,
     },
   ],

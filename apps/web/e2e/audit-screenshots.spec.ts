@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures.js";
 import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,7 +7,12 @@ const ADMIN = { email: "admin@e2e.local", password: "E2eAdminPass1!" };
 const OUT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../docs/evidence/task-8");
 
 test("capture Журнал screenshots at 1440 and 390", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name === "phone-390", "captures both viewports in one desktop run");
+  // Intentional: this single desktop-project run resizes to 1440 and 390 itself.
+  // Skipping phone-390 avoids duplicate evidence captures and double runtime.
+  test.skip(
+    testInfo.project.name === "phone-390",
+    "intentional: dual-viewport evidence captured in one desktop run (setViewportSize 1440+390)",
+  );
   mkdirSync(OUT, { recursive: true });
 
   await page.goto("/login");

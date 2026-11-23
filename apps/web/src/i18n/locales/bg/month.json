@@ -1,0 +1,52 @@
+{
+  "title": "Този месец",
+  "description": "Покритие на обектите за избрания месец.",
+  "filters": {
+    "month": "Месец",
+    "area": "Зона",
+    "areaAll": "Всички зони",
+    "employee": "Служител",
+    "employeeAll": "Всички служители"
+  },
+  "tiles": {
+    "SERVICED": "Обслужени",
+    "UPCOMING": "Предстоящи",
+    "OVERDUE": "Просрочени",
+    "NOT_STARTED": "Не е започнал",
+    "ENDED": "Приключил",
+    "ON_DEMAND": "При заявка",
+    "withoutSubscription": "Без абонамент: {{count}}"
+  },
+  "tabs": {
+    "list": "Списък",
+    "calendar": "Календар"
+  },
+  "columns": {
+    "site": "Обект",
+    "client": "Клиент",
+    "area": "Зона",
+    "status": "Статус",
+    "lastVisit": "Последно посещение",
+    "nextDue": "Следващо",
+    "employees": "Служители"
+  },
+  "status": {
+    "SERVICED": "Обслужен",
+    "UPCOMING": "Предстоящ",
+    "OVERDUE": "Просрочен",
+    "NOT_STARTED": "Не е започнал",
+    "ENDED": "Приключил",
+    "ON_DEMAND": "При заявка",
+    "NOT_DUE": "Не дължим"
+  },
+  "empty": "Няма обекти за този месец",
+  "calendar": {
+    "dayTitle": "{{date}}",
+    "serviced": "Обслужени",
+    "due": "Предстоящи",
+    "overdue": "Просрочени",
+    "emptyDay": "Няма обекти за този ден",
+    "weekList": "Седмичен списък"
+  },
+  "emDash": "—"
+}

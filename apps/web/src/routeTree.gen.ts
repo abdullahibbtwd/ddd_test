@@ -17,14 +17,19 @@ import { Route as ShellAgreementsRouteImport } from './routes/_shell/agreements'
 import { Route as ShellCertificatesRouteImport } from './routes/_shell/certificates'
 import { Route as ShellClientsRouteImport } from './routes/_shell/clients'
 import { Route as ShellInvoicesRouteImport } from './routes/_shell/invoices'
+import { Route as ShellMonthRouteImport } from './routes/_shell/month'
 import { Route as ShellPaymentsRouteImport } from './routes/_shell/payments'
 import { Route as ShellReportsRouteImport } from './routes/_shell/reports'
 import { Route as ShellSettingsRouteImport } from './routes/_shell/settings'
+import { Route as ShellSitesRouteImport } from './routes/_shell/sites'
 import { Route as ShellVisitsRouteImport } from './routes/_shell/visits'
 import { Route as ShellDevStyleguideRouteImport } from './routes/_shell/dev.styleguide'
 import { Route as ShellSettingsAreasRouteImport } from './routes/_shell/settings.areas'
 import { Route as ShellSettingsAuditRouteImport } from './routes/_shell/settings.audit'
+import { Route as ShellSettingsSiteTypesRouteImport } from './routes/_shell/settings.site-types'
 import { Route as ShellSettingsUsersRouteImport } from './routes/_shell/settings.users'
+import { Route as ShellVisitsNewRouteImport } from './routes/_shell/visits_.new'
+import { Route as ShellVisitsIdEditRouteImport } from './routes/_shell/visits_.$id.edit'
 
 const ShellRoute = ShellRouteImport.update({
   id: '/_shell',
@@ -65,6 +70,11 @@ const ShellInvoicesRoute = ShellInvoicesRouteImport.update({
   path: '/invoices',
   getParentRoute: () => ShellRoute,
 } as any)
+const ShellMonthRoute = ShellMonthRouteImport.update({
+  id: '/month',
+  path: '/month',
+  getParentRoute: () => ShellRoute,
+} as any)
 const ShellPaymentsRoute = ShellPaymentsRouteImport.update({
   id: '/payments',
   path: '/payments',
@@ -78,6 +88,11 @@ const ShellReportsRoute = ShellReportsRouteImport.update({
 const ShellSettingsRoute = ShellSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellSitesRoute = ShellSitesRouteImport.update({
+  id: '/sites',
+  path: '/sites',
   getParentRoute: () => ShellRoute,
 } as any)
 const ShellVisitsRoute = ShellVisitsRouteImport.update({
@@ -100,10 +115,25 @@ const ShellSettingsAuditRoute = ShellSettingsAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => ShellSettingsRoute,
 } as any)
+const ShellSettingsSiteTypesRoute = ShellSettingsSiteTypesRouteImport.update({
+  id: '/site-types',
+  path: '/site-types',
+  getParentRoute: () => ShellSettingsRoute,
+} as any)
 const ShellSettingsUsersRoute = ShellSettingsUsersRouteImport.update({
   id: '/users',
   path: '/users',
   getParentRoute: () => ShellSettingsRoute,
+} as any)
+const ShellVisitsNewRoute = ShellVisitsNewRouteImport.update({
+  id: '/visits_/new',
+  path: '/visits/new',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellVisitsIdEditRoute = ShellVisitsIdEditRouteImport.update({
+  id: '/visits_/$id/edit',
+  path: '/visits/$id/edit',
+  getParentRoute: () => ShellRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -114,14 +144,19 @@ export interface FileRoutesByFullPath {
   '/certificates': typeof ShellCertificatesRoute
   '/clients': typeof ShellClientsRoute
   '/invoices': typeof ShellInvoicesRoute
+  '/month': typeof ShellMonthRoute
   '/payments': typeof ShellPaymentsRoute
   '/reports': typeof ShellReportsRoute
   '/settings': typeof ShellSettingsRouteWithChildren
+  '/sites': typeof ShellSitesRoute
   '/visits': typeof ShellVisitsRoute
   '/dev/styleguide': typeof ShellDevStyleguideRoute
   '/settings/areas': typeof ShellSettingsAreasRoute
   '/settings/audit': typeof ShellSettingsAuditRoute
+  '/settings/site-types': typeof ShellSettingsSiteTypesRoute
   '/settings/users': typeof ShellSettingsUsersRoute
+  '/visits/new': typeof ShellVisitsNewRoute
+  '/visits/$id/edit': typeof ShellVisitsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/change-password': typeof ChangePasswordRoute
@@ -130,15 +165,20 @@ export interface FileRoutesByTo {
   '/certificates': typeof ShellCertificatesRoute
   '/clients': typeof ShellClientsRoute
   '/invoices': typeof ShellInvoicesRoute
+  '/month': typeof ShellMonthRoute
   '/payments': typeof ShellPaymentsRoute
   '/reports': typeof ShellReportsRoute
   '/settings': typeof ShellSettingsRouteWithChildren
+  '/sites': typeof ShellSitesRoute
   '/visits': typeof ShellVisitsRoute
   '/': typeof ShellIndexRoute
   '/dev/styleguide': typeof ShellDevStyleguideRoute
   '/settings/areas': typeof ShellSettingsAreasRoute
   '/settings/audit': typeof ShellSettingsAuditRoute
+  '/settings/site-types': typeof ShellSettingsSiteTypesRoute
   '/settings/users': typeof ShellSettingsUsersRoute
+  '/visits/new': typeof ShellVisitsNewRoute
+  '/visits/$id/edit': typeof ShellVisitsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -149,15 +189,20 @@ export interface FileRoutesById {
   '/_shell/certificates': typeof ShellCertificatesRoute
   '/_shell/clients': typeof ShellClientsRoute
   '/_shell/invoices': typeof ShellInvoicesRoute
+  '/_shell/month': typeof ShellMonthRoute
   '/_shell/payments': typeof ShellPaymentsRoute
   '/_shell/reports': typeof ShellReportsRoute
   '/_shell/settings': typeof ShellSettingsRouteWithChildren
+  '/_shell/sites': typeof ShellSitesRoute
   '/_shell/visits': typeof ShellVisitsRoute
   '/_shell/': typeof ShellIndexRoute
   '/_shell/dev/styleguide': typeof ShellDevStyleguideRoute
   '/_shell/settings/areas': typeof ShellSettingsAreasRoute
   '/_shell/settings/audit': typeof ShellSettingsAuditRoute
+  '/_shell/settings/site-types': typeof ShellSettingsSiteTypesRoute
   '/_shell/settings/users': typeof ShellSettingsUsersRoute
+  '/_shell/visits_/new': typeof ShellVisitsNewRoute
+  '/_shell/visits_/$id/edit': typeof ShellVisitsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -169,14 +214,19 @@ export interface FileRouteTypes {
     | '/certificates'
     | '/clients'
     | '/invoices'
+    | '/month'
     | '/payments'
     | '/reports'
     | '/settings'
+    | '/sites'
     | '/visits'
     | '/dev/styleguide'
     | '/settings/areas'
     | '/settings/audit'
+    | '/settings/site-types'
     | '/settings/users'
+    | '/visits/new'
+    | '/visits/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/change-password'
@@ -185,15 +235,20 @@ export interface FileRouteTypes {
     | '/certificates'
     | '/clients'
     | '/invoices'
+    | '/month'
     | '/payments'
     | '/reports'
     | '/settings'
+    | '/sites'
     | '/visits'
     | '/'
     | '/dev/styleguide'
     | '/settings/areas'
     | '/settings/audit'
+    | '/settings/site-types'
     | '/settings/users'
+    | '/visits/new'
+    | '/visits/$id/edit'
   id:
     | '__root__'
     | '/_shell'
@@ -203,15 +258,20 @@ export interface FileRouteTypes {
     | '/_shell/certificates'
     | '/_shell/clients'
     | '/_shell/invoices'
+    | '/_shell/month'
     | '/_shell/payments'
     | '/_shell/reports'
     | '/_shell/settings'
+    | '/_shell/sites'
     | '/_shell/visits'
     | '/_shell/'
     | '/_shell/dev/styleguide'
     | '/_shell/settings/areas'
     | '/_shell/settings/audit'
+    | '/_shell/settings/site-types'
     | '/_shell/settings/users'
+    | '/_shell/visits_/new'
+    | '/_shell/visits_/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -278,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellInvoicesRouteImport
       parentRoute: typeof ShellRoute
     }
+    '/_shell/month': {
+      id: '/_shell/month'
+      path: '/month'
+      fullPath: '/month'
+      preLoaderRoute: typeof ShellMonthRouteImport
+      parentRoute: typeof ShellRoute
+    }
     '/_shell/payments': {
       id: '/_shell/payments'
       path: '/payments'
@@ -297,6 +364,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof ShellSettingsRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/sites': {
+      id: '/_shell/sites'
+      path: '/sites'
+      fullPath: '/sites'
+      preLoaderRoute: typeof ShellSitesRouteImport
       parentRoute: typeof ShellRoute
     }
     '/_shell/visits': {
@@ -327,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellSettingsAuditRouteImport
       parentRoute: typeof ShellSettingsRoute
     }
+    '/_shell/settings/site-types': {
+      id: '/_shell/settings/site-types'
+      path: '/site-types'
+      fullPath: '/settings/site-types'
+      preLoaderRoute: typeof ShellSettingsSiteTypesRouteImport
+      parentRoute: typeof ShellSettingsRoute
+    }
     '/_shell/settings/users': {
       id: '/_shell/settings/users'
       path: '/users'
@@ -334,18 +415,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellSettingsUsersRouteImport
       parentRoute: typeof ShellSettingsRoute
     }
+    '/_shell/visits_/new': {
+      id: '/_shell/visits_/new'
+      path: '/visits/new'
+      fullPath: '/visits/new'
+      preLoaderRoute: typeof ShellVisitsNewRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/visits_/$id/edit': {
+      id: '/_shell/visits_/$id/edit'
+      path: '/visits/$id/edit'
+      fullPath: '/visits/$id/edit'
+      preLoaderRoute: typeof ShellVisitsIdEditRouteImport
+      parentRoute: typeof ShellRoute
+    }
   }
 }
 
 interface ShellSettingsRouteChildren {
   ShellSettingsAreasRoute: typeof ShellSettingsAreasRoute
   ShellSettingsAuditRoute: typeof ShellSettingsAuditRoute
+  ShellSettingsSiteTypesRoute: typeof ShellSettingsSiteTypesRoute
   ShellSettingsUsersRoute: typeof ShellSettingsUsersRoute
 }
 
 const ShellSettingsRouteChildren: ShellSettingsRouteChildren = {
   ShellSettingsAreasRoute: ShellSettingsAreasRoute,
   ShellSettingsAuditRoute: ShellSettingsAuditRoute,
+  ShellSettingsSiteTypesRoute: ShellSettingsSiteTypesRoute,
   ShellSettingsUsersRoute: ShellSettingsUsersRoute,
 }
 
@@ -358,12 +455,16 @@ interface ShellRouteChildren {
   ShellCertificatesRoute: typeof ShellCertificatesRoute
   ShellClientsRoute: typeof ShellClientsRoute
   ShellInvoicesRoute: typeof ShellInvoicesRoute
+  ShellMonthRoute: typeof ShellMonthRoute
   ShellPaymentsRoute: typeof ShellPaymentsRoute
   ShellReportsRoute: typeof ShellReportsRoute
   ShellSettingsRoute: typeof ShellSettingsRouteWithChildren
+  ShellSitesRoute: typeof ShellSitesRoute
   ShellVisitsRoute: typeof ShellVisitsRoute
   ShellIndexRoute: typeof ShellIndexRoute
   ShellDevStyleguideRoute: typeof ShellDevStyleguideRoute
+  ShellVisitsNewRoute: typeof ShellVisitsNewRoute
+  ShellVisitsIdEditRoute: typeof ShellVisitsIdEditRoute
 }
 
 const ShellRouteChildren: ShellRouteChildren = {
@@ -371,12 +472,16 @@ const ShellRouteChildren: ShellRouteChildren = {
   ShellCertificatesRoute: ShellCertificatesRoute,
   ShellClientsRoute: ShellClientsRoute,
   ShellInvoicesRoute: ShellInvoicesRoute,
+  ShellMonthRoute: ShellMonthRoute,
   ShellPaymentsRoute: ShellPaymentsRoute,
   ShellReportsRoute: ShellReportsRoute,
   ShellSettingsRoute: ShellSettingsRouteWithChildren,
+  ShellSitesRoute: ShellSitesRoute,
   ShellVisitsRoute: ShellVisitsRoute,
   ShellIndexRoute: ShellIndexRoute,
   ShellDevStyleguideRoute: ShellDevStyleguideRoute,
+  ShellVisitsNewRoute: ShellVisitsNewRoute,
+  ShellVisitsIdEditRoute: ShellVisitsIdEditRoute,
 }
 
 const ShellRouteWithChildren = ShellRoute._addFileChildren(ShellRouteChildren)
