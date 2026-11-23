@@ -20,6 +20,18 @@ export type AppTransactionClient = ActorSettingClient & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userArea: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  client: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  site: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  siteType: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  subscription: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  visit: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  visitEmployee: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   $queryRaw: any;
 };
 

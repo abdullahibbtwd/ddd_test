@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures.js";
 import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,7 +7,12 @@ const ADMIN = { email: "admin@e2e.local", password: "E2eAdminPass1!" };
 const OUT = resolve(dirname(fileURLToPath(import.meta.url)), "../../../docs/evidence/task-9");
 
 test("capture users and areas screenshots at 1440 and 390", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name === "phone-390", "captures both viewports in one desktop run");
+  // Intentional: this single desktop-project run resizes to 1440 and 390 itself.
+  // Skipping phone-390 avoids duplicate evidence captures and double runtime.
+  test.skip(
+    testInfo.project.name === "phone-390",
+    "intentional: dual-viewport evidence captured in one desktop run (setViewportSize 1440+390)",
+  );
   test.setTimeout(120_000);
   mkdirSync(OUT, { recursive: true });
 
@@ -35,8 +40,8 @@ test("capture users and areas screenshots at 1440 and 390", async ({ page }, tes
 
   await page.getByRole("button", { name: "Нов потребител" }).click();
   const createDrawer = page.getByRole("dialog", { name: "Нов потребител" });
-  await createDrawer.getByRole("textbox", { name: "Имезадължително" }).fill("Screenshot Office");
-  await createDrawer.getByRole("textbox", { name: "Имейлзадължително" }).fill(`screenshot-${Date.now()}@e2e.local`);
+  await createDrawer.getByRole("textbox", { name: "Име задължително" }).fill("Screenshot Office");
+  await createDrawer.getByRole("textbox", { name: "Имейл задължително" }).fill(`screenshot-${Date.now()}@e2e.local`);
   await createDrawer.getByRole("button", { name: "Запази" }).click();
   await expect(page.getByRole("dialog", { name: "Временна парола" })).toBeVisible({ timeout: 15_000 });
   await shot("users-temp-password-1440.png", 1440, 900);
@@ -63,8 +68,8 @@ test("capture users and areas screenshots at 1440 and 390", async ({ page }, tes
 
   await page.getByRole("button", { name: "Нов потребител" }).click();
   const createDrawerPhone = page.getByRole("dialog", { name: "Нов потребител" });
-  await createDrawerPhone.getByRole("textbox", { name: "Имезадължително" }).fill("Screenshot Phone");
-  await createDrawerPhone.getByRole("textbox", { name: "Имейлзадължително" }).fill(`screenshot-phone-${Date.now()}@e2e.local`);
+  await createDrawerPhone.getByRole("textbox", { name: "Име задължително" }).fill("Screenshot Phone");
+  await createDrawerPhone.getByRole("textbox", { name: "Имейл задължително" }).fill(`screenshot-phone-${Date.now()}@e2e.local`);
   await createDrawerPhone.getByRole("button", { name: "Запази" }).click();
   await expect(page.getByRole("dialog", { name: "Временна парола" })).toBeVisible({ timeout: 15_000 });
   await shot("users-temp-password-390.png", 390, 844);

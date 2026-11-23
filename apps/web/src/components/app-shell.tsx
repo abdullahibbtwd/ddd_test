@@ -9,7 +9,7 @@ import { ShellUserFooter } from "@/components/shell-user-footer";
 import { Button } from "@/components/ui/button";
 import { homePathForRole } from "@/config/nav";
 
-function Brand({ home }: { home: "/" | "/visits" }) {
+function Brand({ home }: { home: "/" | "/sites" }) {
   const { t } = useTranslation();
   return (
     <Link

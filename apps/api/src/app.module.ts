@@ -6,6 +6,7 @@ import { ZodSerializerInterceptor, ZodValidationPipe } from "nestjs-zod";
 import { AreasModule } from "./areas/areas.module";
 import { AuditModule } from "./audit/audit.module";
 import { AuthModule } from "./auth/auth.module";
+import { ClientsModule } from "./clients/clients.module";
 import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
 import { OriginGuard } from "./auth/guards/origin.guard";
 import { PoliciesGuard } from "./auth/guards/policies.guard";
@@ -18,8 +19,13 @@ import { MailModule } from "./mail/mail.module";
 import { PdfModule } from "./pdf/pdf.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { QueueModule } from "./queue/queue.module";
+import { SiteTypesModule } from "./site-types/site-types.module";
+import { SitesModule } from "./sites/sites.module";
 import { StorageModule } from "./storage/storage.module";
+import { SchedulingModule } from "./scheduling/scheduling.module";
+import { SubscriptionsModule } from "./subscriptions/subscriptions.module";
 import { UsersModule } from "./users/users.module";
+import { VisitsModule } from "./visits/visits.module";
 
 /** Paths redacted from structured logs (never log secrets / credentials). */
 export const LOGGER_REDACT_PATHS = [
@@ -84,6 +90,12 @@ export const LOGGER_REDACT_PATHS = [
     AuditModule,
     AuthModule,
     AreasModule,
+    ClientsModule,
+    SiteTypesModule,
+    SitesModule,
+    SubscriptionsModule,
+    SchedulingModule,
+    VisitsModule,
     UsersModule,
     QueueModule,
     StorageModule,

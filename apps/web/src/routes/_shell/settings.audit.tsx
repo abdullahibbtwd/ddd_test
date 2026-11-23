@@ -43,7 +43,7 @@ const ACTION_OPTIONS = [
   "REFRESH_REUSE_DETECTED",
 ] as const;
 
-const ENTITY_OPTIONS = ["users", "auth_sessions"] as const;
+const ENTITY_OPTIONS = ["users", "auth_sessions", "areas", "user_areas", "clients"] as const;
 
 function shortId(id: string | null | undefined, empty: string): string {
   if (!id) return empty;

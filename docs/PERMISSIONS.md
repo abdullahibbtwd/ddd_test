@@ -3,18 +3,25 @@
 ## How abilities work
 
 - Shared factory: `defineAbilityFor({ id, role, areaIds? })` in `@ddcrm/shared`.
-- Actions: `manage`, `create`, `read`, `update`, `delete`.
-- Subjects (now): `User`, `Area`, `AuditLog`, `Setting` (plus CASL’s `all`).
-- **Current matrix (Task 9):**
-  - **ADMIN** — `can('manage', 'all')`
-  - **OFFICE** — `can('read', 'Area')` (all active areas); no `User`, `Setting`, or `AuditLog`
-  - **FIELD** — `can('read', 'Area', { id: { $in: areaIds } })` only for assigned **active** area ids; no `User`, `Setting`, or `AuditLog`
-- Own profile read/change stays on `/api/auth/*` via `@AuthenticatedOnly()`, not CASL.
-- API lists and get-one for `Area` apply `accessibleAreaWhere(ability)` from `apps/api/src/auth/accessible-area-where.ts`. Reads outside scope return **404** `NOT_FOUND`.
+- Actions: `manage`, `create`, `read`, `update`, `delete`, `quickCreate`.
+- Subjects (now): `User`, `Area`, `Client`, `Site`, `SiteType`, `Subscription`, `Visit`, `Scheduling`, `AuditLog`, `Setting` (plus CASL’s `all`).
 
-Conditions such as `{ areaId: { $in: areaIds } }` are supported by the factory
-shape (proven with a TEST-ONLY `Site` subject in unit tests). Real site scoping
-lands with Sites in Phase 2.
+## Current matrix (Task 14)
+
+| Subject | ADMIN | OFFICE | FIELD |
+|---|---|---|---|
+| User, Setting, AuditLog | manage | User: read (employee filter only); Setting/AuditLog: none | none |
+| Area | manage | read all | read assigned `areaIds` only |
+| Client | manage | manage | read when client has a site in user’s areas (`siteAreaId`); `quickCreate` (sites route only) |
+| Site | manage | manage | read + create in assigned areas; **no update/delete** |
+| SiteType | manage | read | read |
+| Subscription | manage | manage | read when the site’s area is in user’s `areaIds` (`siteAreaId`) |
+| Visit | manage | manage | create / read / update (cancel) when the site’s area is in `areaIds`; ownership + 7-day / 24-hour windows enforced in the API; **no delete** |
+| Scheduling (`scheduling.read`) | manage (via all) | read | read (sites via `accessibleSiteWhere`) |
+
+- Own profile read/change stays on `/api/auth/*` via `@AuthenticatedOnly()`, not CASL.
+- API lists/get-one apply `accessibleAreaWhere` / `accessibleSiteWhere` / `accessibleClientWhere` / `accessibleSubscriptionWhere` / `accessibleVisitWhere` / `accessibleSchedulingWhere` from `apps/api/src/auth/accessible-where.ts`. Visit/subscription helpers nest `accessibleSiteWhere` on the parent site. Resource reads outside scope return **404** (`NOT_FOUND` or `SITE_OUT_OF_SCOPE`).
+- **«Този месец» filter exception:** out-of-scope `areaId` / `employeeId` on `GET /api/scheduling/month` and `/month/days` return an **empty result (200)**, not 404 — the filter is a preference, not a resource. A site appears only if the caller can already see it (`accessibleSchedulingWhere` → `accessibleSiteWhere`).
 
 ## API guards (default-deny, two layers)
 
@@ -23,8 +30,7 @@ lands with Sites in Phase 2.
    - `@AuthenticatedOnly()` — logged in is enough
    - `@Can(action, subject)` — CASL check
 
-A route with none of `@Public` / `@AuthenticatedOnly` / `@Can` is rejected with
-403 for everyone. Covered by `apps/api/test/default-deny.spec.ts`.
+Covered by `apps/api/test/default-deny.spec.ts`.
 
 ## Adding a subject and rules
 
@@ -32,20 +38,12 @@ A route with none of `@Public` / `@AuthenticatedOnly` / `@Can` is rejected with
 2. Extend `defineAbilityFor` with role rules (and conditions when needed).
 3. Protect API handlers with `@Can('read' | …, 'YourSubject')`.
 4. On the web, use `<Can I="read" a="YourSubject">` from `AbilityProvider`.
-5. Update the intended matrix below when the phase confirms behaviour.
+5. Update this matrix when the phase confirms behaviour.
 
-## Intended permissions (to be confirmed per phase)
-
-Documentation only — **not** enforced in code yet.
+## Intended permissions (later phases)
 
 | Subject | ADMIN | OFFICE | FIELD |
 |---|---|---|---|
-| User, Setting, AuditLog | manage | none | none |
-| Area | manage | read all | read assigned `areaIds` only |
-| Client | manage | manage | read only for clients that have a site in the user's areas |
-| Site | manage | manage | read and create in assigned areas only; no delete |
-| Subscription | manage | manage | read in assigned areas |
-| Visit | manage | manage | create and update own visits in assigned areas; no delete |
 | Invoice | manage | manage | read and create/issue in assigned areas; never update or delete an issued invoice |
 | Payment | manage | manage | create and read own collected payments; no delete |
 | Product, Certificate, Agreement | manage | manage | read |

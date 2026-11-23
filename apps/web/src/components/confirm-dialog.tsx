@@ -9,6 +9,8 @@ export interface ConfirmDialogProps {
   onOpenChange: (open: boolean) => void;
   title: ReactNode;
   description?: ReactNode;
+  /** Extra content below the description (e.g. a date input). */
+  children?: ReactNode;
   confirmLabel?: ReactNode;
   cancelLabel?: ReactNode;
   onConfirm: () => void;
@@ -23,6 +25,7 @@ export function ConfirmDialog({
   onOpenChange,
   title,
   description,
+  children,
   confirmLabel,
   cancelLabel,
   onConfirm,
@@ -53,6 +56,7 @@ export function ConfirmDialog({
           ) : (
             <DialogPrimitive.Description className="sr-only">{title}</DialogPrimitive.Description>
           )}
+          {children ? <div className="mt-4">{children}</div> : null}
           <div className="mt-6 flex justify-end gap-2">
             <DialogPrimitive.Close asChild>
               <Button variant="secondary">{cancelLabel ?? t("actions.cancel")}</Button>

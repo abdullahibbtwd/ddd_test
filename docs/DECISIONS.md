@@ -1,4 +1,4 @@
-# Decisions (Tasks 1–9)
+# Decisions (Tasks 1–14)
 
 One line of reasoning each. Newest themes last.
 
@@ -90,3 +90,58 @@ One line of reasoning each. Newest themes last.
 - **FIELD → other role keeps `user_areas` rows** — ignored for non-FIELD roles; switching back to FIELD reuses assignments.
 - **Bull Board at `/api/admin/queues`** — requires a valid admin session (`access_token` cookie, path `/api`) and CASL `manage Setting`; legacy `/admin/queues` returns 404; basic auth and `BULL_BOARD_*` env removed.
 - **Pins:** `libphonenumber-js@1.13.16` (1.13.17 still inside `minimumReleaseAge`); `@casl/prisma` not pinned (incompatible with our Prisma path — central helper instead); `@casl/ability@7.1.3` direct dependency in API for any future use (already in shared).
+
+## Clients (Task 10)
+
+- **No EGN on clients** — only display/contact fields and optional EIK; personal national IDs stay out of scope.
+- **Archive, not delete** — `is_active=false`; archived rows block edits except reactivation; list defaults to active.
+- **FIELD has no Client CASL rules yet** — office/admin manage clients; area-scoped **read** for FIELD arrives with Sites (Task 11).
+- **Unique partial index on `eik`** — one client per ЕИК including archived; race guard maps `P2002` to `DUPLICATE_EIK`.
+- **`PaymentMethod` shared enum** — `CASH` / `BANK_TRANSFER` / `CARD` / `OTHER` in `@ddcrm/shared` for clients now and payments later.
+- **`name_normalized` in application code** — not a DB trigger; always set on create/update with `normalizeClientName`.
+- **`SAME_EIK` hard block, `SIMILAR_NAME` warning** — duplicates endpoint uses exact EIK + `pg_trgm` similarity ≥ 0.6 on `name_normalized`.
+- **`PrismaService` uses private field `db`** — avoids colliding with Prisma’s generated `client` model accessor (`prisma.client` vs a `client` property).
+- **Trigram GIN indexes on `name` and `name_normalized`** — list search uses Prisma `contains`; similarity SQL lives under `apps/api/src/prisma/find-similar-clients.ts` with centralized raw queries.
+- **Perf seed separate from dev seed** — `seed-perf-clients.ts` / `seed-perf-sites.ts` use database `ddcrm_perf` (or `PERF_DATABASE_URL`), not the shared e2e/dev DB; they drop it after evidence unless `PERF_KEEP=1`.
+
+## Sites (Task 11)
+
+- **Site belongs to one client + one ACTIVE area** — business status `ACTIVE` / `TERMINATED` (reversible); no physical deletes.
+- **FIELD home is `/sites` until Visits** — Phase 5 moves FIELD home to `/visits`.
+- **FIELD Site: read + create in assigned areas only** — no update in this task; out-of-scope read → 404; create outside areas → 403.
+- **FIELD Client: scoped read + `quickCreate`** — readable when the client has a site in the user’s areas; new clients only via site quick-add (no FIELD `POST /clients`).
+- **CASL `siteAreaId` condition** — mirrors Site `areaId` so `accessibleClientWhere` agrees with ability rules (`sites.some.areaId`).
+- **Leaflet only (no react-leaflet)** — OSM tiles; CSP allows `img-src https://*.tile.openstreetmap.org` only; PWA `runtimeCaching` stays empty (no tile/API cache).
+- **OSM tile use** — Referrer-Policy remains `strict-origin-when-cross-origin` (browser sends Referer to OSM by default). Fits small internal use; upgrade path is a hosted tile provider if traffic grows.
+- **Playwright `reuseExistingServer: false`** — opt-in `PW_REUSE=1` for local debug; avoids stale API without `E2E=1`.
+- **Pins:** `leaflet@1.9.4`, `@types/leaflet@1.9.21` (both outside `minimumReleaseAge`).
+
+## Subscriptions / scheduling (Task 12)
+
+- **At most one subscription active per site per day** — history kept; Postgres `EXCLUDE USING gist` on `daterange(start_date, end_date, '[]')` is the real guard (API maps `23P01` → `SUBSCRIPTION_OVERLAP`).
+- **Local DATE in Europe/Sofia** — no timestamps for subscription windows; `todayInSofia` is the only timezone-aware helper.
+- **Rolling month schedule from last done visit** — not a fixed calendar; any done visit at the site counts (all treatment types).
+- **Rate change affects future visits only** — each visit will store its own charge (Task 13); no rate-history table.
+- **Terminating a site auto-ends the current subscription in the same transaction** — reactivate does not revive it.
+- **`btree_gist` extension** — required for UUID equality + range overlap exclusion.
+- **Duplicate services CHECK via immutable helper** — Postgres forbids subqueries in CHECK; `array_elements_are_unique()` wraps the distinct count.
+- **Pins:** none new for Task 12.
+
+## Visits (Task 13)
+
+- **Visits snapshot the charge; subscriptions do not retroactively rewrite history** — `charged_amount` / `rate_includes_vat` live on the visit (copied from the current subscription at save, or entered for one-offs).
+- **Cancel, never delete** — `ACTIVE` \| `CANCELLED` with required reason; no DELETE endpoint; cancelled rows stay in history.
+- **Idempotency via `(created_by, client_mutation_id)`** — unique index; matching retry → 200; different body → 409. No in-memory cache.
+- **FIELD 7-day / 24-hour windows are tracker assumptions pending client answer** — Sofia calendar for visit dates; absolute UTC for the edit window (DST-safe).
+- **`visit_employees` has its own UUID PK** — required by `audit_attach` (same pattern as `user_areas`); business uniqueness remains `(visit_id, user_id)`.
+- **Pins:** none new for Task 13; `minimumReleaseAge` unchanged.
+
+## This Month / scheduling views (Task 14)
+
+- **Status computed server-side once** — `computeScheduleStatus` runs in the API; list, summary tiles, and calendar all read the same payloads. The web never re-implements the rules.
+- **One filter, three views** — `GET /api/scheduling/month` (+ `/month/days` for calendar buckets); no separate dashboard route; no revenue/amounts on this screen.
+- **No-subscription sites excluded from `/month` and counted separately** — `summary.withoutSubscription`; UI muted link to `/sites?hasSubscription=false`.
+- **Employee filter = LEAD of last ACTIVE visit this month, else `created_by` of most recent ACTIVE visit ever** — ASSIST-only does not match; out-of-scope filter values return empty (200), not 404.
+- **Cancelled visits ignored** as schedule inputs (same as Task 12 engine contract).
+- **`computeScheduleStatus` unchanged** — ON_DEMAND stays ON_DEMAND even with a visit this month (engine priority before SERVICED).
+- **Pins:** none new for Task 14; `minimumReleaseAge` unchanged.

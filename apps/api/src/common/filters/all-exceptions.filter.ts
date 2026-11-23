@@ -8,7 +8,10 @@ import {
   Logger,
 } from "@nestjs/common";
 import { ThrottlerException } from "@nestjs/throttler";
-import { ZodValidationException } from "nestjs-zod";
+import {
+  ZodSerializationException,
+  ZodValidationException,
+} from "nestjs-zod";
 import { ZodError } from "zod";
 import { ApiError, ErrorCode } from "@ddcrm/shared";
 import { AppConfigService } from "../../config/config.service";
@@ -84,6 +87,27 @@ export class AllExceptionsFilter implements ExceptionFilter {
           code: ErrorCode.VALIDATION_FAILED,
           message: "Validation failed",
           details,
+        },
+      };
+    }
+
+    if (exception instanceof ZodSerializationException) {
+      const zodError = exception.getZodError();
+      const details =
+        zodError instanceof ZodError
+          ? zodError.issues.map((issue) => ({
+              path: issue.path.join("."),
+              message: issue.message,
+            }))
+          : zodError;
+      this.logger.error(
+        `ZodSerializationException: ${JSON.stringify(details)}`,
+      );
+      return {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        body: {
+          code: ErrorCode.INTERNAL,
+          message: "Internal Server Error",
         },
       };
     }

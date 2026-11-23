@@ -38,6 +38,28 @@ The first migration enables:
 - `unaccent` — accent-insensitive matching
 - `pgcrypto` — cryptographic helpers
 
+Later migrations may add:
+
+- `btree_gist` — GiST support for scalar equality combined with range operators (used by subscription non-overlap)
+
+## Exclusion constraints (non-overlapping ranges)
+
+Pattern used by `subscriptions`: one open interval per site at a time.
+
+```sql
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+ALTER TABLE subscriptions ADD CONSTRAINT subscriptions_site_daterange_excl
+  EXCLUDE USING gist (
+    site_id WITH =,
+    daterange(start_date, end_date, '[]') WITH &&
+  );
+```
+
+- Inclusive bounds (`'[]'`): ending on day D and starting on D+1 do **not** overlap.
+- A null `end_date` makes the range open-ended (unbounded upper).
+- Violation SQLSTATE `23P01` is mapped in the API to `SUBSCRIPTION_OVERLAP`.
+
 ## Audit log
 
 `audit_log` is append-only (triggers reject UPDATE / DELETE / TRUNCATE). Row
@@ -78,8 +100,33 @@ ON example (email)
 WHERE deleted_at IS NULL;
 ```
 
+## Idempotency via unique key (visits)
+
+Pattern: unique index on `(created_by, client_mutation_id)`. The API catches
+unique violations (and pre-checks) and either returns the existing row (**200**)
+when the business fields match, or **409**
+`IDEMPOTENCY_KEY_REUSED_WITH_DIFFERENT_BODY` when they differ. No application-
+level cache.
+
+## Trigger-enforced visit rules
+
+- **Subscription window** — `BEFORE INSERT/UPDATE` on `visits`: if
+  `subscription_id` is set, `visit_date` must fall in that subscription’s
+  `[start_date, end_date]` (null end = open).
+- **Exactly one LEAD** — deferred constraint triggers on `visit_employees`
+  (and after visit insert) require ≥ 1 employee and exactly one `LEAD` per
+  visit by end of transaction.
+- **No future visit_date** — CHECK:
+  `visit_date <= (created_at AT TIME ZONE 'Europe/Sofia')::date`.
+- **Cancel consistency** — CHECK tying `status` to the three cancel columns.
+
 Deploy migrations in non-dev environments with:
 
 ```bash
 pnpm db:deploy
 ```
+
+## Task 14 (This Month)
+
+**No schema change.** List, summary, and calendar are read-only queries over
+existing `sites`, `subscriptions`, `visits`, and `visit_employees`.
