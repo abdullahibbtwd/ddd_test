@@ -57,6 +57,7 @@ if echo "$STATUS" | grep -q "NO ROLE ASSIGNED"; then
     g layout apply --version "$NEXT"
   fi
 else
+  # Prod compose uses `garage server --single-node`, which usually assigns layout already.
   echo "==> Layout already assigned — skipping"
 fi
 

@@ -41,20 +41,25 @@ services:
   garage:
     image: dxflrs/garage:v2.5.0
     restart: unless-stopped
-    # No --default-bucket: layout / bucket / key come from infra/garage/init-prod.sh
-    command: ["/garage", "server"]
+    # --single-node auto-assigns layout. Bucket/key still via infra/garage/init-prod.sh
+    # (avoid --default-bucket here: Coolify S3_* placeholders may not be valid Garage keys).
+    command: ["/garage", "server", "--single-node"]
     volumes:
       - ./garage/garage.prod.toml:/etc/garage.toml:ro
       - garage_meta:/var/lib/garage/meta
       - garage_data:/var/lib/garage/data
     networks: [internal]
     healthcheck:
-      # `garage status` exits 0 once the process is up (layout may still be pending).
-      test: ["CMD", "/garage", "status"]
+      # Exec form only: dxflrs/garage is FROM scratch (no /bin/sh). A string/CMD-SHELL
+      # healthcheck fails immediately and blocks api/worker on service_healthy.
+      test:
+        - CMD
+        - /garage
+        - status
       interval: 10s
       timeout: 5s
-      retries: 10
-      start_period: 15s
+      retries: 12
+      start_period: 40s
 
   gotenberg:
     image: gotenberg/gotenberg:9.8.0
@@ -111,8 +116,10 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+      # service_started: Garage image has no shell; some hosts mishandle its healthcheck.
+      # API readiness still probes S3; run init-prod.sh once for bucket/key.
       garage:
-        condition: service_healthy
+        condition: service_started
       gotenberg:
         condition: service_healthy
     networks: [internal]
@@ -145,7 +152,7 @@ services:
       redis:
         condition: service_healthy
       garage:
-        condition: service_healthy
+        condition: service_started
       gotenberg:
         condition: service_healthy
     networks: [internal]
