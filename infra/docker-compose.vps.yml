@@ -1,0 +1,7 @@
+# Optional overlay when this stack owns the host's 80/443 (no Coolify / no other proxy).
+#   docker compose -f infra/docker-compose.yml -f infra/docker-compose.vps.yml --env-file .env.production up -d --build
+services:
+  caddy:
+    ports:
+      - "80:80"
+      - "443:443"

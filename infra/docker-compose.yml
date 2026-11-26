@@ -1,7 +1,10 @@
-# Production-like stack. ONLY Caddy publishes ports (80/443).
+# Production-like stack. Caddy is the only HTTP entry (web + /api).
+# Coolify / shared hosts: no host port binds (proxy reaches caddy:80 on the network).
+# Bare-metal VPS with host 80/443 free: also use infra/docker-compose.vps.yml.
 # Config: copy .env.production.example → .env.production and fill CHANGE_ME values.
 # Usage:
 #   docker compose -f infra/docker-compose.yml --env-file .env.production up -d --build
+#   docker compose -f infra/docker-compose.yml -f infra/docker-compose.vps.yml --env-file .env.production up -d --build
 # First-time Garage: ./infra/garage/init-prod.sh
 
 name: ddcrm
@@ -186,9 +189,10 @@ services:
       context: ./caddy
       dockerfile: Dockerfile
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
+    # Container ports only — do not bind host 80/443 (Coolify/other apps own those).
+    expose:
+      - "80"
+      - "443"
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:-localhost}
       # Set to `auto_https off` for local plain-HTTP testing (see .env.production.example).
