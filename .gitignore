@@ -10,3 +10,14 @@ apps/web/test-results
 apps/web/playwright-report
 
 apps/api/src/generated
+
+# Local package cache — not needed to run the app (pnpm install recreates deps)
+.pnpm-store/
+
+# Task screenshots / evidence dumps — docs only, not runtime
+docs/evidence/
+
+# Test/tool caches
+**/.vitest/
+*.tsbuildinfo
+tmp/
