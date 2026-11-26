@@ -39,13 +39,15 @@ services:
       start_period: 5s
 
   garage:
-    image: dxflrs/garage:v2.5.0
+    image: ddcrm-garage:local
+    build:
+      context: ./garage
+      dockerfile: Dockerfile
     restart: unless-stopped
     # --single-node auto-assigns layout. Bucket/key still via infra/garage/init-prod.sh
     # (avoid --default-bucket here: Coolify S3_* placeholders may not be valid Garage keys).
     command: ["/garage", "server", "--single-node"]
     volumes:
-      - ./garage/garage.prod.toml:/etc/garage.toml:ro
       - garage_meta:/var/lib/garage/meta
       - garage_data:/var/lib/garage/data
     networks: [internal]
@@ -179,7 +181,10 @@ services:
       start_period: 10s
 
   caddy:
-    image: caddy:2.10.2-alpine
+    image: ddcrm-caddy:local
+    build:
+      context: ./caddy
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "80:80"
@@ -189,7 +194,8 @@ services:
       # Set to `auto_https off` for local plain-HTTP testing (see .env.production.example).
       CADDY_AUTO_HTTPS: ${CADDY_AUTO_HTTPS:-}
     volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      # Config is COPY'd in infra/caddy/Dockerfile (Coolify bind-mounts turn missing
+      # files into directories and break /etc/caddy/Caddyfile).
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
