@@ -25,11 +25,6 @@ export const Route = createFileRoute("/_shell")({
       throw redirect({ to: homePathForRole(user.role) });
     }
 
-    // FIELD home is /sites until Visits (Phase 5) — send bare `/` there.
-    if (path === "/" && user.role === "FIELD") {
-      throw redirect({ to: "/sites" });
-    }
-
     return { user };
   },
   component: ShellLayout,

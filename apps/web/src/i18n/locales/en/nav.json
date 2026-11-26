@@ -1,0 +1,17 @@
+{
+  "primary": "Main navigation",
+  "dashboard": "Dashboard",
+  "clients": "Clients",
+  "sites": "Sites",
+  "month": "This month",
+  "visits": "Visits",
+  "products": "Products",
+  "invoices": "Invoices",
+  "payments": "Payments",
+  "cash": "Cash",
+  "certificates": "Certificates",
+  "agreements": "Agreements",
+  "food": "Food",
+  "reports": "Reports",
+  "settings": "Settings"
+}

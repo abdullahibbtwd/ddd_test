@@ -34,6 +34,7 @@ import type { Decimal } from "../generated/prisma/internal/prismaNamespace";
 import { findSimilarSitesByAddress } from "../prisma/find-similar-sites";
 import type { AppTransactionClient } from "../prisma/run-transaction";
 import { PrismaService } from "../prisma/prisma.service";
+import { MonitoringService } from "../products/monitoring.service";
 
 const MAP_CAP = 500;
 
@@ -59,7 +60,10 @@ type SiteWithRelations = {
 
 @Injectable()
 export class SitesService {
-  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject(MonitoringService) private readonly monitoring: MonitoringService,
+  ) {}
 
   private abilityFor(user: AuthRequestUser) {
     return defineAbilityFor({
@@ -512,9 +516,11 @@ export class SitesService {
         throw new AppException(ErrorCode.CLIENT_ARCHIVED, "Client is archived");
       }
 
+      const siteId = createId();
+      const targetCount = body.monitoringPointsCount ?? 0;
       const row = await this.prisma.site.create({
         data: {
-          id: createId(),
+          id: siteId,
           clientId: body.clientId,
           areaId: body.areaId,
           siteTypeId: body.siteTypeId,
@@ -525,13 +531,22 @@ export class SitesService {
           contactPerson: body.contactPerson ?? null,
           contactPhone,
           floorAreaM2: body.floorAreaM2 ?? null,
-          monitoringPointsCount: body.monitoringPointsCount ?? 0,
+          // Count is owned by the monitoring_points sync trigger after reconcile.
+          monitoringPointsCount: 0,
           notes: body.notes ?? null,
           status: SiteStatus.ACTIVE,
           terminatedAt: null,
         },
         include: this.includeRelations,
       });
+      if (targetCount > 0 && this.abilityFor(user).can("manage", "MonitoringPoint")) {
+        await this.monitoring.reconcile(user, siteId, { targetCount });
+        const refreshed = await this.prisma.site.findUniqueOrThrow({
+          where: { id: siteId },
+          include: this.includeRelations,
+        });
+        return this.toItem(refreshed as SiteWithRelations);
+      }
       return this.toItem(row as SiteWithRelations);
     }
 
@@ -588,7 +603,7 @@ export class SitesService {
             contactPerson: body.contactPerson ?? null,
             contactPhone,
             floorAreaM2: body.floorAreaM2 ?? null,
-            monitoringPointsCount: body.monitoringPointsCount ?? 0,
+            monitoringPointsCount: 0,
             notes: body.notes ?? null,
             status: SiteStatus.ACTIVE,
             terminatedAt: null,
@@ -596,6 +611,15 @@ export class SitesService {
           include: this.includeRelations,
         });
       });
+      const targetCount = body.monitoringPointsCount ?? 0;
+      if (targetCount > 0 && this.abilityFor(user).can("manage", "MonitoringPoint")) {
+        await this.monitoring.reconcile(user, siteId, { targetCount });
+        const refreshed = await this.prisma.site.findUniqueOrThrow({
+          where: { id: siteId },
+          include: this.includeRelations,
+        });
+        return this.toItem(refreshed as SiteWithRelations);
+      }
       return this.toItem(row as SiteWithRelations);
     } catch (error) {
       if (this.isUniqueViolation(error) && newClient.eik) {
@@ -639,9 +663,9 @@ export class SitesService {
       data.contactPhone = this.normalizeOptionalPhone(body.contactPhone) ?? null;
     }
     if (body.floorAreaM2 !== undefined) data.floorAreaM2 = body.floorAreaM2;
-    if (body.monitoringPointsCount !== undefined) {
-      data.monitoringPointsCount = body.monitoringPointsCount;
-    }
+    // monitoringPointsCount is applied via reconcile (UI uses PATCH site OR
+    // POST …/monitoring-points/reconcile). Do not write the denormalized column
+    // directly — the monitoring_points trigger owns it.
     if (body.notes !== undefined) data.notes = body.notes;
 
     if (body.status !== undefined) {
@@ -661,8 +685,8 @@ export class SitesService {
     const terminating =
       body.status === SiteStatus.TERMINATED && existing.status !== SiteStatus.TERMINATED;
 
-    const row = await this.prisma.transaction(async (tx) => {
-      const updated = await tx.site.update({
+    await this.prisma.transaction(async (tx) => {
+      await tx.site.update({
         where: { id },
         data,
         include: this.includeRelations,
@@ -670,13 +694,23 @@ export class SitesService {
       if (terminating) {
         await this.endCurrentSubscriptionInTx(tx, id, todayInSofia(new Date()));
       }
-      return updated;
+    });
+
+    if (body.monitoringPointsCount !== undefined) {
+      await this.monitoring.reconcile(user, id, {
+        targetCount: body.monitoringPointsCount,
+      });
+    }
+
+    const refreshed = await this.prisma.site.findUniqueOrThrow({
+      where: { id },
+      include: this.includeRelations,
     });
 
     const [currentSubscription, lastVisitSummary] = await Promise.all([
       this.loadCurrentSubscription(id),
       this.loadLastVisitSummary(id),
     ]);
-    return this.toItem(row as SiteWithRelations, currentSubscription, lastVisitSummary);
+    return this.toItem(refreshed as SiteWithRelations, currentSubscription, lastVisitSummary);
   }
 }

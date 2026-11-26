@@ -30,6 +30,7 @@ export interface ClientItemDtoOutput {
   preferredPaymentMethod: ClientItemDtoOutputPreferredPaymentMethod;
   /** @nullable */
   notes: string | null;
+  notifyByEmail: boolean;
   isActive: boolean;
   /**
    * @minimum 0

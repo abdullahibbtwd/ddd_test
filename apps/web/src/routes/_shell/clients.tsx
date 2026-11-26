@@ -35,14 +35,22 @@ import { isApiRequestError } from "@/api/mutator";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Drawer } from "@/components/drawer";
 import { EmptyState } from "@/components/empty-state";
-import { FilterBar } from "@/components/filter-bar";
 import { FormField } from "@/components/form-field";
+import {
+  ListSearchInput,
+  ListToolbar,
+  listFilterControlClass,
+  MobileListCard,
+  PrimaryNewButton,
+  ResponsiveList,
+  SoftPill,
+} from "@/components/list-chrome";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -59,8 +67,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { buildDuplicateUiState } from "./clients-duplicates";
+import { buildDuplicateUiState } from "./-clients-duplicates";
 import { cn } from "@/lib/utils";
+
+function ClientStatusPill({ active, label }: { active: boolean; label: string }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        active
+          ? "bg-[#ECFDF5] text-[#047857]"
+          : "bg-[#F1F5F9] text-[#64748B]",
+      )}
+    >
+      {label}
+    </span>
+  );
+}
 
 export const Route = createFileRoute("/_shell/clients")({
   component: ClientsPage,
@@ -115,6 +138,7 @@ function ClientsPage() {
   const [email, setEmail] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"" | PaymentMethodType>("");
   const [notes, setNotes] = useState("");
+  const [notifyByEmail, setNotifyByEmail] = useState(false);
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [raceDuplicateName, setRaceDuplicateName] = useState<string | null>(null);
@@ -172,6 +196,7 @@ function ClientsPage() {
       setEmail("");
       setPaymentMethod("");
       setNotes("");
+      setNotifyByEmail(false);
       return;
     }
     const item = drawerTarget.item;
@@ -185,6 +210,7 @@ function ClientsPage() {
     setEmail(item.email ?? "");
     setPaymentMethod(item.preferredPaymentMethod ?? "");
     setNotes(item.notes ?? "");
+    setNotifyByEmail(item.notifyByEmail);
   }, [drawerTarget]);
 
   useEffect(() => {
@@ -282,6 +308,7 @@ function ClientsPage() {
       email: email.trim() ? email.trim().toLowerCase() : null,
       preferredPaymentMethod: paymentMethod === "" ? null : paymentMethod,
       notes: notes.trim() ? notes.trim() : null,
+      notifyByEmail,
     };
 
     const schema = isCreate ? CreateClientBodySchema : UpdateClientBodySchema;
@@ -354,125 +381,184 @@ function ClientsPage() {
       ? t("duplicates.sameEik", { name: duplicateUi.sameEik.name })
       : undefined);
 
+  function openClient(row: ClientItem) {
+    setDrawerTarget({ mode: "edit", item: row });
+  }
+
   return (
     <div>
       <PageHeader
         title={t("title")}
         actions={
-          <Button onClick={() => setDrawerTarget({ mode: "create" })}>{t("newClient")}</Button>
+          <PrimaryNewButton onClick={() => setDrawerTarget({ mode: "create" })}>
+            {t("newClient")}
+          </PrimaryNewButton>
         }
       />
 
-      <FilterBar>
-        <div className="space-y-1.5">
-          <Label htmlFor="clients-search">{t("filters.search")}</Label>
-          <Input
-            id="clients-search"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder={t("filters.searchPlaceholder")}
-            className="w-56"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.kind")}</Label>
-          <Select
-            value={kindFilter || "__all"}
-            onValueChange={(v) => {
-              setKindFilter(v === "__all" ? "" : v);
-              setPage(1);
-            }}
+      <ListToolbar>
+        <ListSearchInput
+          id="clients-search"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          placeholder={t("filters.searchPlaceholder")}
+          aria-label={t("filters.search")}
+        />
+        <Select
+          value={kindFilter || "__all"}
+          onValueChange={(v) => {
+            setKindFilter(v === "__all" ? "" : v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger
+            className={cn(listFilterControlClass, "w-full sm:w-40")}
+            aria-label={t("filters.kind")}
           >
-            <SelectTrigger className="w-44">
-              <SelectValue placeholder={t("filters.kindAll")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all">{t("filters.kindAll")}</SelectItem>
-              <SelectItem value={ClientKind.COMPANY}>{t("filters.kindCompany")}</SelectItem>
-              <SelectItem value={ClientKind.INDIVIDUAL}>{t("filters.kindIndividual")}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.status")}</Label>
-          <Select
-            value={statusFilter}
-            onValueChange={(v) => {
-              setStatusFilter(v);
-              setPage(1);
-            }}
+            <SelectValue placeholder={t("filters.kindAll")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all">{t("filters.kindAll")}</SelectItem>
+            <SelectItem value={ClientKind.COMPANY}>{t("filters.kindCompany")}</SelectItem>
+            <SelectItem value={ClientKind.INDIVIDUAL}>{t("filters.kindIndividual")}</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={statusFilter}
+          onValueChange={(v) => {
+            setStatusFilter(v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger
+            className={cn(listFilterControlClass, "w-full sm:w-36")}
+            aria-label={t("filters.status")}
           >
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="active">{t("filters.statusActive")}</SelectItem>
-              <SelectItem value="archived">{t("filters.statusArchived")}</SelectItem>
-              <SelectItem value="all">{t("filters.statusAll")}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </FilterBar>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="active">{t("filters.statusActive")}</SelectItem>
+            <SelectItem value="archived">{t("filters.statusArchived")}</SelectItem>
+            <SelectItem value="all">{t("filters.statusAll")}</SelectItem>
+          </SelectContent>
+        </Select>
+      </ListToolbar>
 
       {isLoading ? (
-        <p className="text-sm text-ink-muted">{t("empty")}</p>
+        <p className="text-sm text-[#64748B]">{t("empty")}</p>
       ) : isError || items.length === 0 ? (
         <EmptyState message={t("empty")} />
       ) : (
         <>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t("columns.name")}</TableHead>
-                <TableHead numeric>{t("columns.eik")}</TableHead>
-                <TableHead>{t("columns.kind")}</TableHead>
-                <TableHead numeric className="hidden min-[640px]:table-cell">
-                  {t("columns.phone")}
-                </TableHead>
-                <TableHead numeric className="hidden min-[640px]:table-cell">
-                  {t("columns.sites")}
-                </TableHead>
-                <TableHead>{t("columns.status")}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((row) => (
-                <TableRow
-                  key={row.id}
-                  interactive
-                  onClick={() => setDrawerTarget({ mode: "edit", item: row })}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setDrawerTarget({ mode: "edit", item: row });
-                    }
-                  }}
-                  tabIndex={0}
-                  role="button"
-                >
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell numeric className="font-mono text-sm">
-                    {row.eik ?? t("emDash")}
-                  </TableCell>
-                  <TableCell>{t(`kind.${row.kind}`)}</TableCell>
-                  <TableCell numeric className="hidden min-[640px]:table-cell">
-                    {formatPhoneCell(row.phone, t("emDash"))}
-                  </TableCell>
-                  <TableCell numeric className="num hidden min-[640px]:table-cell">
-                    {row.activeSiteCount}
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge variant={row.isActive ? "ok" : "neutral"}>
-                      {row.isActive ? t("status.active") : t("status.archived")}
-                    </StatusBadge>
-                  </TableCell>
+          <ResponsiveList
+            table={
+            <Table className="min-w-[40rem]">
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold tracking-wider text-[#64748B] uppercase">
+                    {t("columns.name")}
+                  </TableHead>
+                  <TableHead
+                    numeric
+                    className="border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold tracking-wider text-[#64748B] uppercase"
+                  >
+                    {t("columns.eik")}
+                  </TableHead>
+                  <TableHead className="border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold tracking-wider text-[#64748B] uppercase">
+                    {t("columns.kind")}
+                  </TableHead>
+                  <TableHead className="border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold tracking-wider text-[#64748B] uppercase">
+                    {t("columns.phone")}
+                  </TableHead>
+                  <TableHead
+                    numeric
+                    className="border-[#E2E8F0] bg-[#F8FAFC] text-xs font-semibold tracking-wider text-[#64748B] uppercase"
+                  >
+                    {t("columns.sites")}
+                  </TableHead>
+                  <TableHead className="border-[#E2E8F0] bg-[#F8FAFC] text-center text-xs font-semibold tracking-wider text-[#64748B] uppercase">
+                    {t("columns.status")}
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {items.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    interactive
+                    className="hover:bg-[#F8FAFC]/80"
+                    onClick={() => openClient(row)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openClient(row);
+                      }
+                    }}
+                    tabIndex={0}
+                    role="button"
+                  >
+                    <TableCell className="border-[#E2E8F0]/80 font-medium text-[#0F172A]">
+                      {row.name}
+                    </TableCell>
+                    <TableCell numeric className="border-[#E2E8F0]/80 font-mono text-sm tabular-nums text-[#334155]">
+                      {row.eik ?? t("emDash")}
+                    </TableCell>
+                    <TableCell className="border-[#E2E8F0]/80">
+                      <SoftPill>{t(`kind.${row.kind}`)}</SoftPill>
+                    </TableCell>
+                    <TableCell className="border-[#E2E8F0]/80 text-[#475569]">
+                      {formatPhoneCell(row.phone, t("emDash"))}
+                    </TableCell>
+                    <TableCell numeric className="border-[#E2E8F0]/80 tabular-nums text-[#334155]">
+                      {row.activeSiteCount}
+                    </TableCell>
+                    <TableCell className="border-[#E2E8F0]/80 text-center">
+                      <ClientStatusPill
+                        active={row.isActive}
+                        label={row.isActive ? t("status.active") : t("status.archived")}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            }
+            cards={
+              <ul className="space-y-3">
+                {items.map((row) => (
+                  <li key={row.id}>
+                    <MobileListCard onClick={() => openClient(row)}>
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="min-w-0 truncate font-semibold text-[#0F172A]">{row.name}</p>
+                        <ClientStatusPill
+                          active={row.isActive}
+                          label={row.isActive ? t("status.active") : t("status.archived")}
+                        />
+                      </div>
+                      <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                        <span className="font-mono text-xs tabular-nums text-[#64748B]">
+                          {row.eik ?? t("emDash")}
+                        </span>
+                        <SoftPill>{t(`kind.${row.kind}`)}</SoftPill>
+                      </div>
+                      <div className="mt-2.5 flex items-center justify-between gap-3">
+                        <span className="text-xs font-medium tabular-nums text-[#334155]">
+                          {t("columns.sites")}: {row.activeSiteCount}
+                        </span>
+                        <span className="truncate text-xs text-[#94A3B8]">
+                          {formatPhoneCell(row.phone, t("emDash"))}
+                        </span>
+                      </div>
+                    </MobileListCard>
+                  </li>
+                ))}
+              </ul>
+            }
+          />
+
           <Pagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />
         </>
       )}
@@ -714,6 +800,15 @@ function ClientsPage() {
                 </SelectContent>
               </Select>
             </FormField>
+            <label className="flex items-center gap-2 text-sm text-ink">
+              <Checkbox
+                checked={notifyByEmail}
+                disabled={editing !== null && !editing.isActive}
+                onCheckedChange={(value) => setNotifyByEmail(value === true)}
+                data-testid="client-notify-by-email"
+              />
+              {t("drawer.notifyByEmail")}
+            </label>
             <FormField label={t("drawer.notes")}>
               <Textarea
                 value={notes}

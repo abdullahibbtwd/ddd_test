@@ -40,5 +40,6 @@ export interface UpdateClientBodyDto {
    * @nullable
    */
   notes?: string | null;
+  notifyByEmail?: boolean;
   isActive?: boolean;
 }

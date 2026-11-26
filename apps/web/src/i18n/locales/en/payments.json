@@ -1,0 +1,55 @@
+{
+  "title": "Payments",
+  "description": "Unpaid and overdue invoices.",
+  "empty": "No invoices to show.",
+  "columns": {
+    "number": "Number",
+    "client": "Client",
+    "dueDate": "Due date",
+    "gross": "Amount",
+    "paid": "Paid",
+    "outstanding": "Outstanding",
+    "classification": "Classification"
+  },
+  "filters": {
+    "status": "Status",
+    "statusAll": "All",
+    "from": "Due from",
+    "to": "Due to"
+  },
+  "classification": {
+    "DRAFT": "Draft",
+    "UNPAID_CURRENT": "Current",
+    "OVERDUE": "Overdue",
+    "PAID": "Paid",
+    "CANCELLED": "Cancelled"
+  },
+  "sectionTitle": "Payments",
+  "outstandingLine": "Outstanding: {{amount}}",
+  "paidLabel": "Paid",
+  "addPayment": "Add payment",
+  "savePayment": "Save",
+  "sendReminder": "Send reminder",
+  "reminderTitle": "Send reminder",
+  "reminderDescription": "An email reminder will be added to the queue.",
+  "reminderNotOverdue": "Invoice is not overdue ({{classification}}).",
+  "reminderForce": "Send anyway",
+  "reminderConfirm": "Send",
+  "reminderQueued": "Reminder added to the queue.",
+  "reminderHistory": "Reminder history",
+  "reminderHistoryEmpty": "No reminders sent.",
+  "method": {
+    "CASH": "Cash",
+    "BANK_TRANSFER": "Bank transfer",
+    "CARD": "Card"
+  },
+  "fields": {
+    "amount": "Amount",
+    "method": "Method",
+    "paidAt": "Payment date",
+    "collectedBy": "Collected by",
+    "notes": "Notes"
+  },
+  "listEmpty": "No payments recorded.",
+  "dueDate": "Due"
+}

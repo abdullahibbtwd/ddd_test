@@ -1,0 +1,66 @@
+{
+  "tab": "Users",
+  "empty": "No users.",
+  "newUser": "New user",
+  "filters": {
+    "search": "Search",
+    "searchPlaceholder": "Name or email",
+    "role": "Role",
+    "roleAll": "All roles",
+    "status": "Status",
+    "statusAll": "All",
+    "area": "Area",
+    "areaAll": "All areas"
+  },
+  "columns": {
+    "name": "Name",
+    "role": "Role",
+    "areas": "Areas",
+    "phone": "Phone",
+    "lastLogin": "Last sign-in",
+    "status": "Status"
+  },
+  "roles": {
+    "ADMIN": "Administrator",
+    "OFFICE": "Office",
+    "FIELD": "Field"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "areasSummary": "{{count}} areas",
+  "emDash": "—",
+  "drawer": {
+    "createTitle": "New user",
+    "editTitle": "Edit user",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "role": "Role",
+    "areas": "Areas",
+    "noAreasHint": "No areas assigned — the user cannot see any sites",
+    "actionsSection": "Actions",
+    "resetPassword": "Reset password",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "selfModificationHint": "You cannot change your own role or deactivate your own account."
+  },
+  "confirm": {
+    "resetPasswordTitle": "Reset password?",
+    "resetPasswordDescription": "A new temporary password will be generated for {{name}}.",
+    "deactivateTitle": "Deactivate user?",
+    "deactivateDescription": "{{name}} will not be able to sign in to the system.",
+    "activateTitle": "Activate user?",
+    "activateDescription": "{{name}} will be able to sign in to the system again."
+  },
+  "tempPassword": {
+    "title": "Temporary password",
+    "email": "Email",
+    "password": "Password",
+    "copy": "Copy",
+    "copied": "Copied",
+    "hint": "The password is shown only once.",
+    "done": "Done"
+  }
+}

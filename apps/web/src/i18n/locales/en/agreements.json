@@ -1,0 +1,45 @@
+{
+  "title": "Agreements",
+  "emDash": "—",
+  "new": "New agreement",
+  "empty": "No agreements.",
+  "save": "Save",
+  "renew": "Renew",
+  "renewTitle": "Renew agreement",
+  "renewBody": "A new row will be created with the dates below. The previous agreement will be marked as RENEWED. The value and service type stay the same.",
+  "renewConfirm": "Renew",
+  "cancel": "Cancel",
+  "filters": {
+    "status": "Status",
+    "allStatuses": "All",
+    "expiringWithin": "Expiring within days"
+  },
+  "columns": {
+    "client": "Client",
+    "site": "Site",
+    "service": "Service",
+    "signedAt": "Signed",
+    "expiresAt": "Expires",
+    "value": "Value",
+    "status": "Status"
+  },
+  "fields": {
+    "client": "Client",
+    "site": "Site",
+    "serviceType": "Service type",
+    "signedAt": "Signing date",
+    "expiresAt": "Valid until",
+    "contractValue": "Value",
+    "notes": "Notes"
+  },
+  "status": {
+    "ACTIVE": "Active",
+    "EXPIRED": "Expired",
+    "TERMINATED": "Terminated",
+    "RENEWED": "Renewed"
+  },
+  "toast": {
+    "created": "Agreement created.",
+    "renewed": "Agreement renewed."
+  }
+}

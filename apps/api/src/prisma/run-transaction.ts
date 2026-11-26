@@ -32,6 +32,40 @@ export type AppTransactionClient = ActorSettingClient & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   visitEmployee: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  invoice: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  invoiceLine: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  invoiceVisit: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  invoiceCounter: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  emailEvent: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  payment: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cashHandover: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  product: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  visitProduct: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  monitoringPoint: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  monitoringPointCheck: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  clientEmployee: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  healthCertificate: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  agreement: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  foodSamplingSchedule: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  foodSampleRecord: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  storedFile: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   $queryRaw: any;
 };
 

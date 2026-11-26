@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
 import styleguideBg from "@/i18n/locales/bg/styleguide.json";
+import styleguideEn from "@/i18n/locales/en/styleguide.json";
 import { toast } from "sonner";
 import { getHealthControllerGetLivenessUrl, useHealthControllerGetLiveness } from "@/api/generated";
 import { API_BASE_URL } from "@/api/mutator";
@@ -32,6 +33,7 @@ import { formatLv } from "@/lib/format";
 import { SAMPLE_INVOICES, type SampleInvoice } from "./sample-data";
 
 i18n.addResourceBundle("bg", "styleguide", styleguideBg, true, true);
+i18n.addResourceBundle("en", "styleguide", styleguideEn, true, true);
 
 type ColorToken = {
   cssVar: string;

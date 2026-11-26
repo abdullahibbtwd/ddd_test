@@ -1,0 +1,53 @@
+{
+  "bell": {
+    "label": "Известия",
+    "empty": "Няма непрочетени известия.",
+    "emptyHint": "Всичко е под контрол засега.",
+    "unreadCount": "{{count}} непрочетени",
+    "seeAll": "Виж всички",
+    "close": "Затвори"
+  },
+  "page": {
+    "title": "Известия",
+    "description": "Напомняния за сертификати, договори, графици и просрочени фактури.",
+    "empty": "Няма известия.",
+    "unreadOnly": "Само непрочетени",
+    "kind": "Вид",
+    "kindAll": "Всички видове",
+    "priority": "Приоритет",
+    "priorityAll": "Всички",
+    "dismiss": "Скрий",
+    "markAll": "Маркирай всички като прочетени",
+    "summaryTitle": "Обобщение",
+    "summaryHint": "Брой известия за периода. Без съдържание и без адреси.",
+    "clientContact": "Към клиенти",
+    "unread": "Непрочетени",
+    "read": "Прочетени",
+    "dismissed": "Скрити"
+  },
+  "priority": {
+    "NORMAL": "Обичайно",
+    "HIGH": "Високо"
+  },
+  "kinds": {
+    "CERTIFICATE_EXPIRING": {
+      "title": "Здравен сертификат изтича",
+      "body": "Сертификат за обект {{siteName}} изтича на {{expiresAt}}."
+    },
+    "AGREEMENT_EXPIRING": {
+      "title": "Договор изтича",
+      "body": "Договорът за {{siteName}} изтича на {{expiresAt}}."
+    },
+    "FOOD_SCHEDULE_DUE": {
+      "title": "ХВП график е дължим",
+      "body": "Графикът за {{siteName}} е дължим на {{dueDate}}."
+    },
+    "INVOICE_OVERDUE": {
+      "title": "Просрочена фактура",
+      "body": "Фактура {{invoiceNumber}} е с падеж {{dueDate}}."
+    }
+  },
+  "clientBody": {
+    "AGREEMENT_EXPIRING": "Вашият договор за {{siteName}} изтича на {{expiresAt}}."
+  }
+}

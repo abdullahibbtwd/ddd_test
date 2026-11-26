@@ -46,12 +46,9 @@ test("logs in as admin, shows nav, logs out", async ({ page }, testInfo) => {
   await expect(nav.getByRole("link", { name: "Клиенти" })).toBeVisible();
   await expect(nav.getByRole("link", { name: "Настройки" })).toBeVisible();
 
-  if (isPhone) {
-    await expect(page.getByRole("dialog").getByRole("button", { name: "Изход" })).toBeVisible();
-    await page.getByRole("dialog").getByRole("button", { name: "Изход" }).click();
-  } else {
-    await page.getByRole("button", { name: "Изход" }).click();
-  }
+  // Account menu lives in the top navbar (desktop + phone).
+  await page.getByRole("button", { name: "E2E Admin" }).click();
+  await page.getByRole("menuitem", { name: "Изход" }).click();
   await expect(page).toHaveURL(/\/login/);
 });
 

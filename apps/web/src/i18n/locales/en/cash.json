@@ -1,0 +1,28 @@
+{
+  "title": "Cash",
+  "description": "Cash collected and handovers.",
+  "handover": "Hand over cash",
+  "handoverTitle": "Cash handover",
+  "saveHandover": "Save",
+  "collected": "Collected",
+  "handedOver": "Handed over",
+  "outstanding": "Outstanding",
+  "overHanded": "Over-handed",
+  "empty": "No cash data.",
+  "dayDetail": "By day",
+  "fields": {
+    "employee": "Employee",
+    "amount": "Amount",
+    "handedOverAt": "Date",
+    "receivedBy": "Received by",
+    "notes": "Notes"
+  },
+  "columns": {
+    "date": "Date",
+    "collected": "Collected",
+    "handedOver": "Handed over"
+  },
+  "handoverSuccess": "Handover recorded.",
+  "emDash": "—",
+  "dayDetailSep": " — "
+}

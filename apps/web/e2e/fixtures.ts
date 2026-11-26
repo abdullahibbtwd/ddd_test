@@ -20,7 +20,11 @@ type Fixtures = {
 };
 
 /** Always-allowed: SPA session probe before login (and after logout). */
-const DEFAULT_API_ALLOWS: ApiFailureAllow[] = [{ status: 401, url: /\/api\/auth\/me(?:\?|$)/ }];
+const DEFAULT_API_ALLOWS: ApiFailureAllow[] = [
+  { status: 401, url: /\/api\/auth\/me(?:\?|$)/ },
+  // The bell's in-flight list can finish after logout clears the cookie.
+  { status: 401, url: /\/api\/notifications\/me(?:\?|$)/ },
+];
 
 function matchesAllow(text: string, allow: Array<string | RegExp>): boolean {
   return allow.some((a) => (typeof a === "string" ? text.includes(a) : a.test(text)));

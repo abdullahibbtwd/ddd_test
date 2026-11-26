@@ -24,6 +24,37 @@ export function formatMoney(amount: number): string {
   return moneyFormatter.format(amount);
 }
 
+const currencyPartsFormatter = new Intl.NumberFormat("bg-BG", {
+  style: "currency",
+  currency: CURRENCY,
+  currencyDisplay: "symbol",
+});
+
+function currencySuffix(): string {
+  const parts = currencyPartsFormatter.formatToParts(0);
+  const currency = parts.find((p) => p.type === "currency")?.value ?? CURRENCY;
+  return `${NBSP}${currency}`;
+}
+
+/** Dual-scale money: bold major + muted decimals/currency for dashboard craft. */
+export function formatMoneyParts(amount: number): {
+  major: string;
+  minor: string;
+  sign: string;
+} {
+  const sign = amount < 0 ? "−" : "";
+  const abs = Math.abs(amount);
+  const [intPart, fracPart = "00"] = abs.toFixed(2).split(".");
+  const major = Number(intPart)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, NBSP);
+  return {
+    sign,
+    major,
+    minor: `,${fracPart}${currencySuffix()}`,
+  };
+}
+
 /** Formats 'YYYY-MM-DD' as дд.мм.гггг in the Sofia calendar sense (no timezone shift). */
 export function formatIsoDate(isoDate: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(isoDate);

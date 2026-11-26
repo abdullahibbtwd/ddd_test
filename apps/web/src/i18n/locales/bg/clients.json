@@ -6,7 +6,7 @@
   "open": "Отвори",
   "filters": {
     "search": "Търсене",
-    "searchPlaceholder": "Име, ЕИК, телефон или имейл",
+    "searchPlaceholder": "Търсене по име, ЕИК, телефон или имейл…",
     "kind": "Тип",
     "kindAll": "Всички",
     "kindCompany": "Фирма",
@@ -64,6 +64,7 @@
     "paymentMethod": "Начин на плащане",
     "paymentMethodNone": "Без предпочитание",
     "notes": "Бележки",
+    "notifyByEmail": "Уведомявай клиента по имейл",
     "actionsSection": "Действия",
     "archive": "Архивирай",
     "activate": "Активирай"

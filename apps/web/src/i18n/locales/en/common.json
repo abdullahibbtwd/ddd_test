@@ -1,0 +1,56 @@
+{
+  "app": {
+    "name": "DDD CRM",
+    "tagline": "Pest control"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "delete": "Delete",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "empty": {
+    "dashboard": "There is no data to show yet.",
+    "clients": "No clients have been added yet.",
+    "sites": "No sites have been added yet.",
+    "month": "No sites for this month.",
+    "visits": "No visits have been scheduled yet.",
+    "invoices": "No invoices have been issued yet.",
+    "payments": "No payments have been recorded yet.",
+    "products": "No products yet.",
+    "cash": "No cash entries yet.",
+    "certificates": "No certificates have been issued yet.",
+    "agreements": "No agreements have been signed yet.",
+    "food": "No food industry records yet.",
+    "reports": "No data for the selected period",
+    "settings": "No settings to show.",
+    "audit": "No entries in the log.",
+    "default": "Nothing to show."
+  },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "range": "{{from}}–{{to}} of {{total}}",
+    "page": "Page {{page}} of {{pages}}"
+  },
+  "table": {
+    "empty": "No records."
+  },
+  "form": {
+    "required": "required"
+  },
+  "status": {
+    "label": "Status"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "errors": {
+    "unknown": "An error occurred. Please try again.",
+    "network": "Unable to reach the server."
+  }
+}

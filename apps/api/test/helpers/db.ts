@@ -83,6 +83,20 @@ export async function startTestDb(): Promise<TestDb> {
         END IF;
       END $$;
     `);
+    // Singleton gapless counter is seeded by migration; restore after TRUNCATE.
+    if (
+      (
+        await prisma.$queryRaw<{ exists: boolean }[]>`
+          SELECT to_regclass('public.invoice_counters') IS NOT NULL AS exists
+        `
+      )[0]?.exists
+    ) {
+      // eslint-disable-next-line no-restricted-syntax -- test DB reset re-seeds singleton counter
+      await prisma.$executeRawUnsafe(`
+        INSERT INTO invoice_counters (id, next_value) VALUES ('default', 1)
+        ON CONFLICT (id) DO UPDATE SET next_value = 1
+      `);
+    }
   }
 
   async function stop(): Promise<void> {

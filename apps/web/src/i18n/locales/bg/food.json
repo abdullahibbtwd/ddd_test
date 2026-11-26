@@ -1,0 +1,56 @@
+{
+  "title": "ХВП",
+  "emDash": "—",
+  "sep": " · ",
+  "colon": ": ",
+  "activeYes": "Да",
+  "activeNo": "Не",
+  "tabs": {
+    "schedules": "Графици",
+    "records": "Проби"
+  },
+  "newSchedule": "Нов график",
+  "newRecord": "Нова проба",
+  "emptySchedules": "Няма графици.",
+  "emptyRecords": "Няма проби.",
+  "save": "Запази",
+  "cancel": "Отказ",
+  "columns": {
+    "site": "Обект",
+    "service": "Услуга",
+    "cadence": "Период (мес.)",
+    "nextDue": "Следваща",
+    "active": "Активен",
+    "collectedAt": "Събрана",
+    "description": "Описание",
+    "lab": "Лаборатория",
+    "result": "Резултат"
+  },
+  "fields": {
+    "site": "Обект",
+    "serviceType": "Вид услуга",
+    "cadenceMonths": "Период (месеци)",
+    "nextDueAt": "Следваща дата",
+    "active": "Активен",
+    "notes": "Бележки",
+    "schedule": "График",
+    "collectedAt": "Дата на събиране",
+    "sampleDescription": "Описание на пробата",
+    "labName": "Лаборатория",
+    "resultStatus": "Статус на резултата",
+    "resultReceivedAt": "Дата на резултат",
+    "resultSummary": "Резюме",
+    "resultFile": "Файл с резултат"
+  },
+  "result": {
+    "PENDING": "Чакащ",
+    "CONFORMING": "Съответства",
+    "NON_CONFORMING": "Несъответства"
+  },
+  "frozen": "Пробата е заключена след въвеждане на резултат.",
+  "toast": {
+    "scheduleCreated": "Графикът е създаден.",
+    "recordCreated": "Пробата е записана.",
+    "updated": "Записът е запазен."
+  }
+}

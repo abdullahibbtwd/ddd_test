@@ -56,9 +56,88 @@ enum VisitStatus {
   CANCELLED
 }
 
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  CANCELLED_BY_CREDIT_NOTE
+}
+
+enum DocumentType {
+  INVOICE
+  CREDIT_NOTE
+  DEBIT_NOTE
+}
+
+enum EmailEventKind {
+  INVOICE
+  REMINDER
+  NOTIFICATION
+}
+
+enum NotificationKind {
+  CERTIFICATE_EXPIRING
+  AGREEMENT_EXPIRING
+  FOOD_SCHEDULE_DUE
+  INVOICE_OVERDUE
+}
+
+enum NotificationPriority {
+  NORMAL
+  HIGH
+}
+
+enum NotificationRecipientType {
+  SYSTEM_USER
+  CLIENT_CONTACT
+}
+
 enum EmployeeRoleOnVisit {
   LEAD
   ASSIST
+}
+
+enum ProductFormulation {
+  LIQUID
+  POWDER
+  GEL
+  BAIT
+  TRAP
+  AEROSOL
+  OTHER
+}
+
+enum MeasurementUnit {
+  G
+  KG
+  ML
+  L
+  PIECE
+}
+
+enum MonitoringPointType {
+  NEOT
+  POT
+}
+
+enum MonitoringPointStatus {
+  OK
+  ACTIVITY
+  DAMAGED
+  MISSING
+  OTHER
+}
+
+enum AgreementStatus {
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  RENEWED
+}
+
+enum FoodResultStatus {
+  PENDING
+  CONFORMING
+  NON_CONFORMING
 }
 
 model User {
@@ -83,6 +162,25 @@ model User {
   visitsCreated      Visit[]           @relation("VisitCreatedBy")
   visitsCancelled    Visit[]           @relation("VisitCancelledBy")
   visitEmployees     VisitEmployee[]
+  invoicesCreated    Invoice[]         @relation("InvoiceCreatedBy")
+  invoicesIssued     Invoice[]         @relation("InvoiceIssuedBy")
+  paymentsCollected  Payment[]         @relation("PaymentCollectedBy")
+  paymentsCreated    Payment[]         @relation("PaymentCreatedBy")
+  handoversEmployee  CashHandover[]    @relation("HandoverEmployee")
+  handoversReceived  CashHandover[]    @relation("HandoverReceivedBy")
+  handoversCreated   CashHandover[]    @relation("HandoverCreatedBy")
+  productsCreated    Product[]         @relation("ProductCreatedBy")
+  visitProductsCreated VisitProduct[]  @relation("VisitProductCreatedBy")
+  monitoringPointsCreated MonitoringPoint[] @relation("MonitoringPointCreatedBy")
+  monitoringPointChecksCreated MonitoringPointCheck[] @relation("MonitoringPointCheckCreatedBy")
+  clientEmployeesCreated ClientEmployee[] @relation("ClientEmployeeCreatedBy")
+  clientEmployeesErased  ClientEmployee[] @relation("ClientEmployeeErasedBy")
+  healthCertificatesCreated HealthCertificate[] @relation("HealthCertificateCreatedBy")
+  agreementsCreated  Agreement[]       @relation("AgreementCreatedBy")
+  foodSchedulesCreated FoodSamplingSchedule[] @relation("FoodScheduleCreatedBy")
+  foodRecordsCreated FoodSampleRecord[] @relation("FoodRecordCreatedBy")
+  storedFilesCreated StoredFile[]      @relation("StoredFileCreatedBy")
+  notificationsReceived Notification[] @relation("NotificationUser")
 
   @@map("users")
 }
@@ -151,11 +249,17 @@ model Client {
   email                   String?
   preferredPaymentMethod  PaymentMethod?  @map("preferred_payment_method")
   notes                   String?
+  /// Agreement-expiry email to this client. Off unless the office turns it on.
+  notifyByEmail           Boolean         @default(false) @map("notify_by_email")
   isActive                Boolean         @default(true) @map("is_active")
   createdAt               DateTime        @default(now()) @map("created_at") @db.Timestamptz
   updatedAt               DateTime        @updatedAt @map("updated_at") @db.Timestamptz
 
-  sites Site[]
+  sites            Site[]
+  invoices         Invoice[]
+  clientEmployees  ClientEmployee[]
+  agreements       Agreement[]
+  notificationsReceived Notification[] @relation("NotificationClient")
 
   @@index([isActive, name], map: "clients_is_active_name_idx")
   @@map("clients")
@@ -196,8 +300,14 @@ model Site {
   client         Client         @relation(fields: [clientId], references: [id], onDelete: Restrict)
   area           Area           @relation(fields: [areaId], references: [id], onDelete: Restrict)
   siteType       SiteType       @relation(fields: [siteTypeId], references: [id], onDelete: Restrict)
-  subscriptions  Subscription[]
-  visits         Visit[]
+  subscriptions     Subscription[]
+  visits            Visit[]
+  invoices          Invoice[]
+  monitoringPoints  MonitoringPoint[]
+  clientEmployees   ClientEmployee[]
+  agreements        Agreement[]
+  foodSchedules     FoodSamplingSchedule[]
+  foodRecords       FoodSampleRecord[]
 
   @@index([areaId, status], map: "sites_area_id_status_idx")
   @@index([clientId], map: "sites_client_id_idx")
@@ -242,13 +352,18 @@ model Visit {
   createdById      String      @map("created_by") @db.Uuid
   createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz
   updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz
-  clientMutationId String      @map("client_mutation_id") @db.Uuid
+  clientMutationId       String      @map("client_mutation_id") @db.Uuid
+  /// Snapshot of visit_products fields at invoice issue (null until frozen).
+  visitProductsSnapshot  Json?       @map("visit_products_snapshot")
 
   site         Site            @relation(fields: [siteId], references: [id], onDelete: Restrict)
   subscription Subscription?   @relation(fields: [subscriptionId], references: [id], onDelete: Restrict)
   createdBy    User            @relation("VisitCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   cancelledBy  User?           @relation("VisitCancelledBy", fields: [cancelledById], references: [id], onDelete: Restrict)
   employees    VisitEmployee[]
+  invoiceLinks InvoiceVisit[]
+  visitProducts VisitProduct[]
+  pointChecks  MonitoringPointCheck[]
 
   @@unique([createdById, clientMutationId], map: "visits_created_by_client_mutation_id_key")
   @@index([siteId, visitDate(sort: Desc)], map: "visits_site_id_visit_date_idx")
@@ -270,6 +385,429 @@ model VisitEmployee {
 
   @@unique([visitId, userId], map: "visit_employees_visit_id_user_id_key")
   @@map("visit_employees")
+}
+
+/// Singleton gapless invoice number counter (not a Postgres sequence).
+model InvoiceCounter {
+  id        String @id @default("default")
+  nextValue Int    @map("next_value")
+
+  @@map("invoice_counters")
+}
+
+model Invoice {
+  id                        String         @id @db.Uuid
+  number                    String?        @unique
+  status                    InvoiceStatus  @default(DRAFT)
+  documentType              DocumentType   @default(INVOICE) @map("document_type")
+  clientId                  String         @map("client_id") @db.Uuid
+  issuedAt                  DateTime?      @map("issued_at") @db.Timestamptz
+  issuedById                String?        @map("issued_by") @db.Uuid
+  clientLegalName           String?        @map("client_legal_name")
+  clientEik                 String?        @map("client_eik")
+  clientVatNumber           String?        @map("client_vat_number")
+  clientRegisteredAddress   String?        @map("client_registered_address")
+  clientLegalRepresentative String?        @map("client_legal_representative")
+  clientEmail               String?        @map("client_email")
+  clientPhone               String?        @map("client_phone")
+  currency                  String         @default("EUR")
+  netAmount                 Decimal        @default(0) @map("net_amount") @db.Decimal(12, 2)
+  vatAmount                 Decimal        @default(0) @map("vat_amount") @db.Decimal(12, 2)
+  grossAmount               Decimal        @default(0) @map("gross_amount") @db.Decimal(12, 2)
+  notes                     String?
+  referencesInvoiceId       String?        @map("references_invoice_id") @db.Uuid
+  creditNoteReason          String?        @map("credit_note_reason")
+  billingMonth              DateTime?      @map("billing_month") @db.Date
+  siteId                    String?        @map("site_id") @db.Uuid
+  emailSentAt               DateTime?      @map("email_sent_at") @db.Timestamptz
+  emailLastError            String?        @map("email_last_error")
+  /// Set on issue (issued_at::date + 30); NULL for DRAFT; never edited after issue.
+  dueDate                   DateTime?      @map("due_date") @db.Date
+  createdById               String         @map("created_by") @db.Uuid
+  createdAt                 DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt                 DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+
+  client             Client        @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  createdBy          User          @relation("InvoiceCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  issuedBy           User?         @relation("InvoiceIssuedBy", fields: [issuedById], references: [id], onDelete: Restrict)
+  site               Site?         @relation(fields: [siteId], references: [id], onDelete: Restrict)
+  referencesInvoice  Invoice?      @relation("InvoiceCreditDebitRefs", fields: [referencesInvoiceId], references: [id], onDelete: Restrict)
+  referencedBy       Invoice[]     @relation("InvoiceCreditDebitRefs")
+  lines              InvoiceLine[]
+  visits             InvoiceVisit[]
+  emailEvents        EmailEvent[]
+  payments           Payment[]
+
+  @@index([clientId], map: "invoices_client_id_idx")
+  @@index([status, issuedAt(sort: Desc)], map: "invoices_status_issued_at_idx")
+  @@index([documentType], map: "invoices_document_type_idx")
+  @@index([referencesInvoiceId], map: "invoices_references_invoice_id_idx")
+  @@index([billingMonth], map: "invoices_billing_month_idx")
+  @@index([siteId], map: "invoices_site_id_idx")
+  @@index([dueDate], map: "invoices_due_date_idx")
+  @@map("invoices")
+}
+
+model EmailEvent {
+  id             String         @id @db.Uuid
+  invoiceId      String?        @map("invoice_id") @db.Uuid
+  notificationId String?        @map("notification_id") @db.Uuid
+  kind           EmailEventKind @default(INVOICE)
+  toAddress      String         @map("to_address")
+  sentAt         DateTime?      @map("sent_at") @db.Timestamptz
+  failedAt       DateTime?      @map("failed_at") @db.Timestamptz
+  error          String?
+  jobId          String         @unique @map("job_id")
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz
+
+  invoice      Invoice?      @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  notification Notification? @relation(fields: [notificationId], references: [id], onDelete: Restrict)
+
+  @@index([invoiceId, createdAt(sort: Desc)], map: "email_events_invoice_id_created_at_idx")
+  @@index([notificationId, createdAt(sort: Desc)], map: "email_events_notification_id_created_at_idx")
+  @@map("email_events")
+}
+
+/// Additive payment rows. Outstanding = invoice.gross_amount − Σ payments.
+/// INSERT-only (UPDATE/DELETE rejected by trigger). No reversals in Phase 8.
+model Payment {
+  id                String        @id @db.Uuid
+  invoiceId         String        @map("invoice_id") @db.Uuid
+  amount            Decimal       @db.Decimal(12, 2)
+  method            PaymentMethod
+  paidAt            DateTime      @map("paid_at") @db.Date
+  collectedByUserId String?       @map("collected_by_user_id") @db.Uuid
+  notes             String?
+  createdById       String        @map("created_by") @db.Uuid
+  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  collectedBy User?   @relation("PaymentCollectedBy", fields: [collectedByUserId], references: [id], onDelete: Restrict)
+  createdBy   User    @relation("PaymentCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([invoiceId], map: "payments_invoice_id_idx")
+  @@index([collectedByUserId, paidAt], map: "payments_collected_by_paid_at_idx")
+  @@index([paidAt], map: "payments_paid_at_idx")
+  @@map("payments")
+}
+
+/// Cash handover reconciliation rows. Over-handover is legal (negative outstanding).
+/// INSERT-only (UPDATE/DELETE rejected by trigger).
+model CashHandover {
+  id               String   @id @db.Uuid
+  employeeId       String   @map("employee_id") @db.Uuid
+  amount           Decimal  @db.Decimal(12, 2)
+  handedOverAt     DateTime @map("handed_over_at") @db.Date
+  receivedByUserId String   @map("received_by_user_id") @db.Uuid
+  notes            String?
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+  createdById      String   @map("created_by") @db.Uuid
+
+  employee   User @relation("HandoverEmployee", fields: [employeeId], references: [id], onDelete: Restrict)
+  receivedBy User @relation("HandoverReceivedBy", fields: [receivedByUserId], references: [id], onDelete: Restrict)
+  createdBy  User @relation("HandoverCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([employeeId, handedOverAt], map: "cash_handovers_employee_handed_over_at_idx")
+  @@index([handedOverAt], map: "cash_handovers_handed_over_at_idx")
+  @@map("cash_handovers")
+}
+
+model InvoiceLine {
+  id          String  @id @db.Uuid
+  invoiceId   String  @map("invoice_id") @db.Uuid
+  lineNo      Int     @map("line_no")
+  description String
+  quantity    Decimal @db.Decimal(12, 3)
+  unitPrice   Decimal @map("unit_price") @db.Decimal(12, 2)
+  vatRate     Decimal @map("vat_rate") @db.Decimal(5, 2)
+  lineTotal   Decimal @map("line_total") @db.Decimal(12, 2)
+  vatAmount   Decimal @map("vat_amount") @db.Decimal(12, 2)
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+
+  @@unique([invoiceId, lineNo], map: "invoice_lines_invoice_id_line_no_key")
+  @@map("invoice_lines")
+}
+
+/// Product register (master data). Never deleted — archive via `archived`.
+model Product {
+  id                 String             @id @db.Uuid
+  name               String
+  activeSubstances   String[]           @default([]) @map("active_substances")
+  formulation        ProductFormulation
+  permitNumber       String?            @map("permit_number")
+  permitHolder       String?            @map("permit_holder")
+  antidote           String?
+  ventilationPeriod  String?            @map("ventilation_period")
+  exposurePeriod     String?            @map("exposure_period")
+  recommendations    String?
+  defaultDosage      Decimal?           @map("default_dosage") @db.Decimal(10, 3)
+  defaultUnit        MeasurementUnit?   @map("default_unit")
+  archived           Boolean            @default(false)
+  createdById        String             @map("created_by") @db.Uuid
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+
+  createdBy     User           @relation("ProductCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  visitProducts VisitProduct[]
+
+  @@index([archived, name], map: "products_archived_name_idx")
+  @@map("products")
+}
+
+/// Link row: product used on a visit. Real DELETE allowed pre-freeze.
+/// UNIQUE(visit_id, product_id) — one row per product; quantity is summed on re-add.
+model VisitProduct {
+  id          String          @id @db.Uuid
+  visitId     String          @map("visit_id") @db.Uuid
+  productId   String          @map("product_id") @db.Uuid
+  quantity    Decimal         @db.Decimal(10, 3)
+  unit        MeasurementUnit
+  notes       String?
+  createdById String          @map("created_by") @db.Uuid
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+
+  visit     Visit   @relation(fields: [visitId], references: [id], onDelete: Restrict)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  createdBy User    @relation("VisitProductCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@unique([visitId, productId], map: "visit_products_visit_id_product_id_key")
+  @@index([visitId], map: "visit_products_visit_id_idx")
+  @@index([productId], map: "visit_products_product_id_idx")
+  @@map("visit_products")
+}
+
+/// NEOT/POT monitoring point on a site. Deactivate, never delete.
+model MonitoringPoint {
+  id          String              @id @db.Uuid
+  siteId      String              @map("site_id") @db.Uuid
+  label       String
+  location    String?
+  type        MonitoringPointType
+  active      Boolean             @default(true)
+  createdById String              @map("created_by") @db.Uuid
+  createdAt   DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime            @updatedAt @map("updated_at") @db.Timestamptz
+
+  site      Site                   @relation(fields: [siteId], references: [id], onDelete: Restrict)
+  createdBy User                   @relation("MonitoringPointCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  checks    MonitoringPointCheck[]
+
+  @@unique([siteId, label], map: "monitoring_points_site_id_label_key")
+  @@index([siteId, active], map: "monitoring_points_site_id_active_idx")
+  @@map("monitoring_points")
+}
+
+/// Check of a monitoring point during a visit. Visit-scoped only (no standalone
+/// inspection model). photo_file_id reserved for a future task — unused in P9.
+model MonitoringPointCheck {
+  id          String                @id @db.Uuid
+  pointId     String                @map("point_id") @db.Uuid
+  visitId     String                @map("visit_id") @db.Uuid
+  checkedAt   DateTime              @map("checked_at") @db.Date
+  status      MonitoringPointStatus
+  notes       String?
+  photoFileId String?               @map("photo_file_id") @db.Uuid
+  createdById String                @map("created_by") @db.Uuid
+  createdAt   DateTime              @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime              @updatedAt @map("updated_at") @db.Timestamptz
+
+  point     MonitoringPoint @relation(fields: [pointId], references: [id], onDelete: Restrict)
+  visit     Visit           @relation(fields: [visitId], references: [id], onDelete: Restrict)
+  createdBy User            @relation("MonitoringPointCheckCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@unique([pointId, visitId], map: "monitoring_point_checks_point_id_visit_id_key")
+  @@index([visitId], map: "monitoring_point_checks_visit_id_idx")
+  @@index([pointId, checkedAt(sort: Desc)], map: "monitoring_point_checks_point_id_checked_at_idx")
+  @@map("monitoring_point_checks")
+}
+
+/// Junction: visits on an invoice. Own UUID so audit_attach has a stable entity id
+/// (same pattern as visit_employees). Business uniqueness: (invoice_id, visit_id)
+/// and globally UNIQUE(visit_id) — a visit may appear on at most one invoice.
+model InvoiceVisit {
+  id        String @id @db.Uuid
+  invoiceId String @map("invoice_id") @db.Uuid
+  visitId   String @map("visit_id") @db.Uuid
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  visit   Visit   @relation(fields: [visitId], references: [id], onDelete: Restrict)
+
+  @@unique([invoiceId, visitId], map: "invoice_visit_invoice_id_visit_id_key")
+  @@unique([visitId], map: "invoice_visit_visit_id_key")
+  @@map("invoice_visit")
+}
+
+/// Object registry for certificate / food-result attachments (Garage keys).
+model StoredFile {
+  id               String   @id @db.Uuid
+  storageKey       String   @unique @map("storage_key")
+  contentType      String   @map("content_type")
+  originalFilename String?  @map("original_filename")
+  byteSize         Int?     @map("byte_size")
+  createdById      String   @map("created_by") @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  createdBy           User                @relation("StoredFileCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  healthCertificates  HealthCertificate[]
+  foodSampleRecords   FoodSampleRecord[]
+
+  @@map("stored_files")
+}
+
+/// Client-site person (no EGN — name + job title + site only).
+model ClientEmployee {
+  id          String    @id @db.Uuid
+  clientId    String    @map("client_id") @db.Uuid
+  fullName    String    @map("full_name")
+  jobTitle    String?   @map("job_title")
+  siteId      String?   @map("site_id") @db.Uuid
+  notes       String?
+  erasedAt    DateTime? @map("erased_at") @db.Timestamptz
+  erasedById  String?   @map("erased_by") @db.Uuid
+  eraseReason String?   @map("erase_reason")
+  createdById String    @map("created_by") @db.Uuid
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+
+  client       Client              @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  site         Site?               @relation(fields: [siteId], references: [id], onDelete: Restrict)
+  erasedBy     User?               @relation("ClientEmployeeErasedBy", fields: [erasedById], references: [id], onDelete: Restrict)
+  createdBy    User                @relation("ClientEmployeeCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  certificates HealthCertificate[]
+
+  @@index([clientId, erasedAt], map: "client_employees_client_id_erased_at_idx")
+  @@index([siteId], map: "client_employees_site_id_idx")
+  @@map("client_employees")
+}
+
+/// Health certificate history — renewal is a NEW row (never update prior dates for renewal).
+model HealthCertificate {
+  id               String   @id @db.Uuid
+  clientEmployeeId String   @map("client_employee_id") @db.Uuid
+  lastCertifiedAt  DateTime @map("last_certified_at") @db.Date
+  nextRenewalAt    DateTime @map("next_renewal_at") @db.Date
+  notes            String?
+  documentFileId   String?  @map("document_file_id") @db.Uuid
+  createdById      String   @map("created_by") @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  clientEmployee ClientEmployee @relation(fields: [clientEmployeeId], references: [id], onDelete: Restrict)
+  documentFile   StoredFile?    @relation(fields: [documentFileId], references: [id], onDelete: Restrict)
+  createdBy      User           @relation("HealthCertificateCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([clientEmployeeId, nextRenewalAt], map: "health_certificates_employee_renewal_idx")
+  @@index([nextRenewalAt], map: "health_certificates_next_renewal_at_idx")
+  @@map("health_certificates")
+}
+
+/// One row per signing; renewal creates a new row with previous_agreement_id.
+model Agreement {
+  id                  String          @id @db.Uuid
+  clientId            String          @map("client_id") @db.Uuid
+  siteId              String          @map("site_id") @db.Uuid
+  serviceType         ServiceType     @map("service_type")
+  signedAt            DateTime        @map("signed_at") @db.Date
+  expiresAt           DateTime        @map("expires_at") @db.Date
+  contractValue       Decimal         @map("contract_value") @db.Decimal(12, 2)
+  status              AgreementStatus @default(ACTIVE)
+  previousAgreementId String?         @map("previous_agreement_id") @db.Uuid
+  notes               String?
+  createdById         String          @map("created_by") @db.Uuid
+  createdAt           DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+
+  client            Client     @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  site              Site       @relation(fields: [siteId], references: [id], onDelete: Restrict)
+  previousAgreement Agreement? @relation("AgreementRenewalChain", fields: [previousAgreementId], references: [id], onDelete: Restrict)
+  renewals          Agreement[] @relation("AgreementRenewalChain")
+  createdBy         User       @relation("AgreementCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([siteId, expiresAt], map: "agreements_site_id_expires_at_idx")
+  @@index([status, expiresAt], map: "agreements_status_expires_at_idx")
+  @@index([clientId], map: "agreements_client_id_idx")
+  @@map("agreements")
+}
+
+model FoodSamplingSchedule {
+  id            String      @id @db.Uuid
+  siteId        String      @map("site_id") @db.Uuid
+  serviceType   ServiceType @map("service_type")
+  cadenceMonths Int         @map("cadence_months")
+  nextDueAt     DateTime    @map("next_due_at") @db.Date
+  active        Boolean     @default(true)
+  notes         String?
+  createdById   String      @map("created_by") @db.Uuid
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime    @updatedAt @map("updated_at") @db.Timestamptz
+
+  site      Site               @relation(fields: [siteId], references: [id], onDelete: Restrict)
+  createdBy User               @relation("FoodScheduleCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  records   FoodSampleRecord[]
+
+  @@index([active, nextDueAt], map: "food_sampling_schedules_active_next_due_idx")
+  @@index([siteId], map: "food_sampling_schedules_site_id_idx")
+  @@map("food_sampling_schedules")
+}
+
+/// Food sample result record. No sampler/client_employee link in P10.
+model FoodSampleRecord {
+  id                String           @id @db.Uuid
+  scheduleId        String?          @map("schedule_id") @db.Uuid
+  siteId            String           @map("site_id") @db.Uuid
+  collectedAt       DateTime         @map("collected_at") @db.Date
+  sampleDescription String           @map("sample_description")
+  labName           String?          @map("lab_name")
+  resultReceivedAt  DateTime?        @map("result_received_at") @db.Date
+  resultStatus      FoodResultStatus @default(PENDING) @map("result_status")
+  resultSummary     String?          @map("result_summary")
+  resultFileId      String?          @map("result_file_id") @db.Uuid
+  notes             String?
+  createdById       String           @map("created_by") @db.Uuid
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+
+  schedule   FoodSamplingSchedule? @relation(fields: [scheduleId], references: [id], onDelete: Restrict)
+  site       Site                  @relation(fields: [siteId], references: [id], onDelete: Restrict)
+  resultFile StoredFile?           @relation(fields: [resultFileId], references: [id], onDelete: Restrict)
+  createdBy  User                  @relation("FoodRecordCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([siteId, collectedAt(sort: Desc)], map: "food_sample_records_site_collected_idx")
+  @@index([resultStatus, resultReceivedAt], map: "food_sample_records_result_status_idx")
+  @@map("food_sample_records")
+}
+
+/// Stored notification. Created by the daily sweep only.
+/// No updated_at: content is immutable; only read_at and dismissed_at may change.
+/// Partial unique indexes (user and client) live in SQL — Prisma cannot express the WHERE.
+/// DELETE is rejected (23P06). Dismiss sets dismissed_at.
+model Notification {
+  id                String                    @id @db.Uuid
+  recipientUserId   String?                   @map("recipient_user_id") @db.Uuid
+  recipientClientId String?                   @map("recipient_client_id") @db.Uuid
+  recipientType     NotificationRecipientType @map("recipient_type")
+  kind              NotificationKind
+  entityType        String                    @map("entity_type")
+  entityId          String                    @map("entity_id") @db.Uuid
+  thresholdDay      Int                       @map("threshold_day")
+  priority          NotificationPriority
+  titleI18nKey      String                    @map("title_i18n_key")
+  bodyI18nKey       String                    @map("body_i18n_key")
+  bodyParams        Json                      @default("{}") @map("body_params")
+  createdAt         DateTime                  @default(now()) @map("created_at") @db.Timestamptz
+  readAt            DateTime?                 @map("read_at") @db.Timestamptz
+  dismissedAt       DateTime?                 @map("dismissed_at") @db.Timestamptz
+
+  recipientUser   User?        @relation("NotificationUser", fields: [recipientUserId], references: [id], onDelete: Restrict)
+  recipientClient Client?      @relation("NotificationClient", fields: [recipientClientId], references: [id], onDelete: Restrict)
+  emailEvents     EmailEvent[]
+
+  @@index([recipientUserId, readAt, dismissedAt, createdAt(sort: Desc)], map: "notifications_user_bell_idx")
+  @@index([recipientClientId, readAt, createdAt(sort: Desc)], map: "notifications_client_read_idx")
+  @@index([kind, entityId, createdAt(sort: Desc)], map: "notifications_kind_entity_idx")
+  @@map("notifications")
 }
 
 /// Append-only audit trail. Row mutations are rejected by DB triggers.

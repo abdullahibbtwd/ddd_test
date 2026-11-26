@@ -1,0 +1,52 @@
+{
+  "title": "This month",
+  "description": "Site coverage for the selected month.",
+  "filters": {
+    "month": "Month",
+    "area": "Area",
+    "areaAll": "All areas",
+    "employee": "Employee",
+    "employeeAll": "All employees"
+  },
+  "tiles": {
+    "SERVICED": "Serviced",
+    "UPCOMING": "Upcoming",
+    "OVERDUE": "Overdue",
+    "NOT_STARTED": "Not started",
+    "ENDED": "Ended",
+    "ON_DEMAND": "On demand",
+    "withoutSubscription": "No subscription: {{count}}"
+  },
+  "tabs": {
+    "list": "List",
+    "calendar": "Calendar"
+  },
+  "columns": {
+    "site": "Site",
+    "client": "Client",
+    "area": "Area",
+    "status": "Status",
+    "lastVisit": "Last visit",
+    "nextDue": "Next due",
+    "employees": "Employees"
+  },
+  "status": {
+    "SERVICED": "Serviced",
+    "UPCOMING": "Upcoming",
+    "OVERDUE": "Overdue",
+    "NOT_STARTED": "Not started",
+    "ENDED": "Ended",
+    "ON_DEMAND": "On demand",
+    "NOT_DUE": "Not due"
+  },
+  "empty": "No sites for this month",
+  "calendar": {
+    "dayTitle": "{{date}}",
+    "serviced": "Serviced",
+    "due": "Upcoming",
+    "overdue": "Overdue",
+    "emptyDay": "No sites for this day",
+    "weekList": "Weekly list"
+  },
+  "emDash": "—"
+}

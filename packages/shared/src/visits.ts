@@ -58,6 +58,8 @@ export const VisitItemSchema = z.object({
   updatedAt: z.string().datetime(),
   clientMutationId: z.uuid(),
   employees: z.array(VisitEmployeeSchema).min(1),
+  /** Linked invoice id when the visit is on an issued/draft invoice; null otherwise. */
+  invoiceId: z.uuid().nullable().optional(),
 });
 
 export type VisitItem = z.infer<typeof VisitItemSchema>;

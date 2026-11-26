@@ -1,0 +1,28 @@
+{
+  "title": "Каса",
+  "description": "Събрани в брой суми и предавания.",
+  "handover": "Предай каса",
+  "handoverTitle": "Предаване на каса",
+  "saveHandover": "Запази",
+  "collected": "Събрано",
+  "handedOver": "Предадено",
+  "outstanding": "Остава",
+  "overHanded": "Надпредадено",
+  "empty": "Няма данни за каса.",
+  "dayDetail": "По дни",
+  "fields": {
+    "employee": "Служител",
+    "amount": "Сума",
+    "handedOverAt": "Дата",
+    "receivedBy": "Получено от",
+    "notes": "Бележки"
+  },
+  "columns": {
+    "date": "Дата",
+    "collected": "Събрано",
+    "handedOver": "Предадено"
+  },
+  "handoverSuccess": "Предаването е записано.",
+  "emDash": "—",
+  "dayDetailSep": " — "
+}

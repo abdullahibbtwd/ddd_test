@@ -13,6 +13,12 @@ export const AuditSecurityAction = {
   ACCOUNT_LOCKED: "ACCOUNT_LOCKED",
   REFRESH_REUSE_DETECTED: "REFRESH_REUSE_DETECTED",
   PASSWORD_RESET_BY_ADMIN: "PASSWORD_RESET_BY_ADMIN",
+  /** GDPR: every read of client_employees / health_certificates. */
+  READ_PII: "READ_PII",
+  /** GDPR: anonymization of a client employee. */
+  ERASED: "ERASED",
+  /** GDPR: JSON export of a client employee. */
+  EXPORT: "EXPORT",
 } as const;
 
 export type AuditSecurityAction =

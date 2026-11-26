@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  addCalendarMonths,
   addMonths,
   firstDayOfMonth,
   frequencyMonths,
@@ -20,6 +21,12 @@ describe("date helpers", () => {
     expect(addMonths("2026-11", 2)).toBe("2027-01");
     expect(addMonths("2026-01", 0)).toBe("2026-01");
     expect(addMonths("2026-03", -1)).toBe("2026-02");
+  });
+
+  it("addCalendarMonths clamps day-of-month", () => {
+    expect(addCalendarMonths("2026-01-31", 1)).toBe("2026-02-28");
+    expect(addCalendarMonths("2024-02-29", 12)).toBe("2025-02-28");
+    expect(addCalendarMonths("2026-11-25", 1)).toBe("2026-12-25");
   });
 
   it("monthDiff is a − b in months", () => {

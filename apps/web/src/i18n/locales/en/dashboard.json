@@ -1,0 +1,73 @@
+{
+  "title": "Dashboard",
+  "sections": {
+    "today": "Today",
+    "thisMonth": "This month",
+    "cashPosition": "Cash position",
+    "recentActivity": "Recent activity",
+    "systemHealth": "System health",
+    "aging": "Receivables aging",
+    "cashByEmployee": "Cash by employee",
+    "fieldSites": "Sites for today",
+    "notifications": "Unread notifications"
+  },
+  "kpi": {
+    "overdueInvoices": "Overdue invoices",
+    "certsExpiring": "Certificates ≤ 7 days",
+    "agreementsExpiring": "Agreements ≤ 7 days",
+    "foodDue": "Food schedules due",
+    "unreadNotifications": "Unread notifications"
+  },
+  "actions": {
+    "newInvoice": "New invoice",
+    "newSubscription": "New subscription",
+    "addPayment": "Add payment",
+    "issueReport": "Issue report",
+    "startVisit": "Start visit"
+  },
+  "schedule": {
+    "totalSites": "{{count}} sites",
+    "openMonth": "Open month"
+  },
+  "cash": {
+    "collected": "Collected",
+    "handedOver": "Handed over",
+    "outstanding": "Not handed over",
+    "balance": "Current balance",
+    "employee": "Employee",
+    "myOpen": "My open cash: {{amount}}"
+  },
+  "aging": {
+    "totalUnpaid": "Total unpaid",
+    "bucket0_30": "0–30 days",
+    "bucket31_60": "31–60 days",
+    "bucket61_90": "61–90 days",
+    "bucket90": "90+ days",
+    "invoices": "{{count}} invoices",
+    "openReport": "Open outstanding"
+  },
+  "health": {
+    "ok": "OK",
+    "down": "Down",
+    "postgres": "Database",
+    "redis": "Redis",
+    "garage": "Files",
+    "gotenberg": "PDF",
+    "lastChecked": "Checked {{time}}"
+  },
+  "audit": {
+    "empty": "No recent activity.",
+    "system": "System"
+  },
+  "field": {
+    "greeting": "Today · {{count}} sites",
+    "lastVisit": "Last visit: {{date}}",
+    "noSites": "No sites for today.",
+    "areaFallback": "No area",
+    "openNotifications": "View all",
+    "overdueBadge": "Overdue",
+    "upcomingBadge": "Upcoming",
+    "certAlert": "Certificate: {{name}} · expires {{date}}"
+  },
+  "empty": "Nothing to show yet."
+}

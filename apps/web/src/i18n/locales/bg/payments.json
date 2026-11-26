@@ -1,0 +1,55 @@
+{
+  "title": "Плащания",
+  "description": "Неплатени и просрочени фактури.",
+  "empty": "Няма фактури за показване.",
+  "columns": {
+    "number": "Номер",
+    "client": "Клиент",
+    "dueDate": "Дата на падеж",
+    "gross": "Сума",
+    "paid": "Платено",
+    "outstanding": "Остава",
+    "classification": "Класификация"
+  },
+  "filters": {
+    "status": "Статус",
+    "statusAll": "Всички",
+    "from": "Падеж от",
+    "to": "Падеж до"
+  },
+  "classification": {
+    "DRAFT": "Чернова",
+    "UNPAID_CURRENT": "Текуща",
+    "OVERDUE": "Просрочена",
+    "PAID": "Платена",
+    "CANCELLED": "Анулирана"
+  },
+  "sectionTitle": "Плащания",
+  "outstandingLine": "Остава за плащане: {{amount}}",
+  "paidLabel": "Платена",
+  "addPayment": "Добави плащане",
+  "savePayment": "Запази",
+  "sendReminder": "Изпрати напомняне",
+  "reminderTitle": "Изпращане на напомняне",
+  "reminderDescription": "Ще бъде добавено имейл напомняне в опашката.",
+  "reminderNotOverdue": "Фактурата не е просрочена ({{classification}}).",
+  "reminderForce": "Изпрати въпреки това",
+  "reminderConfirm": "Изпрати",
+  "reminderQueued": "Напомнянето е добавено в опашката.",
+  "reminderHistory": "История на напомнянията",
+  "reminderHistoryEmpty": "Няма изпратени напомняния.",
+  "method": {
+    "CASH": "В брой",
+    "BANK_TRANSFER": "Банков превод",
+    "CARD": "Карта"
+  },
+  "fields": {
+    "amount": "Сума",
+    "method": "Начин",
+    "paidAt": "Дата на плащане",
+    "collectedBy": "Събрано от",
+    "notes": "Бележки"
+  },
+  "listEmpty": "Няма записани плащания.",
+  "dueDate": "Падеж"
+}

@@ -22,7 +22,10 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  CertifiedEmployeesControllerCertifiedEmployeesParams,
+  CertifiedEmployeesResponseDtoOutput,
   CreateSiteBodyDto,
+  SiteCertificateCountsDtoOutput,
   SiteDuplicatesResponseDtoOutput,
   SiteItemDtoOutput,
   SiteMapResponseDtoOutput,
@@ -55,6 +58,383 @@ const withQueryKey = <T extends object, K>(
   }
   return result;
 };
+
+export type certifiedEmployeesControllerCertifiedEmployeesResponseDefault = {
+  data: CertifiedEmployeesResponseDtoOutput;
+  status: number;
+};
+
+export type certifiedEmployeesControllerCertifiedEmployeesResponseError =
+  certifiedEmployeesControllerCertifiedEmployeesResponseDefault & {
+    headers: Headers;
+  };
+
+export type certifiedEmployeesControllerCertifiedEmployeesResponse =
+  certifiedEmployeesControllerCertifiedEmployeesResponseError;
+
+export const getCertifiedEmployeesControllerCertifiedEmployeesUrl = (
+  siteId: string,
+  params?: CertifiedEmployeesControllerCertifiedEmployeesParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : String(value));
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/sites/${siteId}/certified-employees?${stringifiedParams}`
+    : `/api/sites/${siteId}/certified-employees`;
+};
+
+export const certifiedEmployeesControllerCertifiedEmployees = async (
+  siteId: string,
+  params?: CertifiedEmployeesControllerCertifiedEmployeesParams,
+  options?: Parameters<typeof apiFetch>[1],
+): Promise<certifiedEmployeesControllerCertifiedEmployeesResponse> => {
+  return apiFetch<certifiedEmployeesControllerCertifiedEmployeesResponse>(
+    getCertifiedEmployeesControllerCertifiedEmployeesUrl(siteId, params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getCertifiedEmployeesControllerCertifiedEmployeesQueryKey = (
+  siteId: string,
+  params?: CertifiedEmployeesControllerCertifiedEmployeesParams,
+) => {
+  return [
+    `/api/sites/${siteId}/certified-employees`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getCertifiedEmployeesControllerCertifiedEmployeesQueryOptions = <
+  TData = Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+  TError = ErrorType<CertifiedEmployeesResponseDtoOutput>,
+>(
+  siteId: string,
+  params?: CertifiedEmployeesControllerCertifiedEmployeesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof apiFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getCertifiedEmployeesControllerCertifiedEmployeesQueryKey(siteId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>
+  > = ({ signal }) =>
+    certifiedEmployeesControllerCertifiedEmployees(siteId, params, {
+      signal,
+      ...requestOptions,
+    });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: siteId !== null && siteId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type CertifiedEmployeesControllerCertifiedEmployeesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>
+>;
+export type CertifiedEmployeesControllerCertifiedEmployeesQueryError =
+  ErrorType<CertifiedEmployeesResponseDtoOutput>;
+
+export function useCertifiedEmployeesControllerCertifiedEmployees<
+  TData = Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+  TError = ErrorType<CertifiedEmployeesResponseDtoOutput>,
+>(
+  siteId: string,
+  params: undefined | CertifiedEmployeesControllerCertifiedEmployeesParams,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+          TError,
+          Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof apiFetch>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCertifiedEmployeesControllerCertifiedEmployees<
+  TData = Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+  TError = ErrorType<CertifiedEmployeesResponseDtoOutput>,
+>(
+  siteId: string,
+  params?: CertifiedEmployeesControllerCertifiedEmployeesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+          TError,
+          Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof apiFetch>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCertifiedEmployeesControllerCertifiedEmployees<
+  TData = Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+  TError = ErrorType<CertifiedEmployeesResponseDtoOutput>,
+>(
+  siteId: string,
+  params?: CertifiedEmployeesControllerCertifiedEmployeesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof apiFetch>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCertifiedEmployeesControllerCertifiedEmployees<
+  TData = Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+  TError = ErrorType<CertifiedEmployeesResponseDtoOutput>,
+>(
+  siteId: string,
+  params?: CertifiedEmployeesControllerCertifiedEmployeesParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof certifiedEmployeesControllerCertifiedEmployees>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof apiFetch>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getCertifiedEmployeesControllerCertifiedEmployeesQueryOptions(
+    siteId,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+export type certifiedEmployeesControllerCountsResponseDefault = {
+  data: SiteCertificateCountsDtoOutput;
+  status: number;
+};
+
+export type certifiedEmployeesControllerCountsResponseError =
+  certifiedEmployeesControllerCountsResponseDefault & {
+    headers: Headers;
+  };
+
+export type certifiedEmployeesControllerCountsResponse =
+  certifiedEmployeesControllerCountsResponseError;
+
+export const getCertifiedEmployeesControllerCountsUrl = (siteId: string) => {
+  return `/api/sites/${siteId}/certificate-counts`;
+};
+
+export const certifiedEmployeesControllerCounts = async (
+  siteId: string,
+  options?: Parameters<typeof apiFetch>[1],
+): Promise<certifiedEmployeesControllerCountsResponse> => {
+  return apiFetch<certifiedEmployeesControllerCountsResponse>(
+    getCertifiedEmployeesControllerCountsUrl(siteId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getCertifiedEmployeesControllerCountsQueryKey = (siteId: string) => {
+  return [`/api/sites/${siteId}/certificate-counts`] as const;
+};
+
+export const getCertifiedEmployeesControllerCountsQueryOptions = <
+  TData = Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+  TError = ErrorType<SiteCertificateCountsDtoOutput>,
+>(
+  siteId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof apiFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getCertifiedEmployeesControllerCountsQueryKey(siteId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>
+  > = ({ signal }) =>
+    certifiedEmployeesControllerCounts(siteId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: siteId !== null && siteId !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
+
+export type CertifiedEmployeesControllerCountsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>
+>;
+export type CertifiedEmployeesControllerCountsQueryError =
+  ErrorType<SiteCertificateCountsDtoOutput>;
+
+export function useCertifiedEmployeesControllerCounts<
+  TData = Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+  TError = ErrorType<SiteCertificateCountsDtoOutput>,
+>(
+  siteId: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+          TError,
+          Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof apiFetch>;
+  },
+  queryClient?: QueryClient,
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCertifiedEmployeesControllerCounts<
+  TData = Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+  TError = ErrorType<SiteCertificateCountsDtoOutput>,
+>(
+  siteId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+          TError,
+          Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof apiFetch>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCertifiedEmployeesControllerCounts<
+  TData = Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+  TError = ErrorType<SiteCertificateCountsDtoOutput>,
+>(
+  siteId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof apiFetch>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+export function useCertifiedEmployeesControllerCounts<
+  TData = Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+  TError = ErrorType<SiteCertificateCountsDtoOutput>,
+>(
+  siteId: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof certifiedEmployeesControllerCounts>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof apiFetch>;
+  },
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getCertifiedEmployeesControllerCountsQueryOptions(siteId, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
 
 export type sitesControllerListResponseDefault = {
   data: SitePageDtoOutput;

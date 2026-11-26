@@ -1,0 +1,98 @@
+{
+  "landing": {
+    "title": "Reports",
+    "description": "Ready reports for revenue, coverage, outstanding balances, cash, expirations, and products."
+  },
+  "export": {
+    "label": "Export",
+    "excel": "Excel",
+    "pdf": "PDF"
+  },
+  "empty": "No data for the selected period",
+  "invalid": "Invalid report",
+  "back": "Back to reports",
+  "refresh": "Refresh",
+  "loading": "Loading…",
+  "filters": {
+    "from": "From",
+    "to": "To",
+    "area": "Area",
+    "employee": "Employee",
+    "client": "Client",
+    "site": "Site",
+    "product": "Product",
+    "kind": "Type",
+    "groupBy": "Group by",
+    "all": "All"
+  },
+  "kinds": {
+    "REVENUE": {
+      "title": "Revenue",
+      "description": "Invoices and credit/debit notes with net, VAT, and gross."
+    },
+    "SERVICE_COVERAGE": {
+      "title": "Service coverage",
+      "description": "Service status by site and month."
+    },
+    "OUTSTANDING": {
+      "title": "Outstanding",
+      "description": "Unpaid invoices with balance and aging."
+    },
+    "CASH": {
+      "title": "Cash",
+      "description": "Collected and handed-over amounts by employee and day."
+    },
+    "EXPIRATIONS": {
+      "title": "Expirations",
+      "description": "Certificates, agreements, and food schedules in the period."
+    },
+    "PRODUCTS": {
+      "title": "Products",
+      "description": "Quantities used by product and month."
+    }
+  },
+  "groupBy": {
+    "CLIENT": "By client",
+    "SITE": "By site",
+    "AREA": "By area",
+    "EMPLOYEE": "By employee",
+    "SERVICE": "By service",
+    "PERIOD": "By month"
+  },
+  "expirationKind": {
+    "CERTIFICATE": "Certificate",
+    "AGREEMENT": "Agreement",
+    "FOOD": "Food"
+  },
+  "columns": {
+    "number": "Number",
+    "client": "Client",
+    "site": "Site",
+    "area": "Area",
+    "employee": "Employee",
+    "date": "Date",
+    "dueDate": "Due date",
+    "net": "Net",
+    "vat": "VAT",
+    "gross": "Gross",
+    "paid": "Paid",
+    "outstanding": "Outstanding",
+    "aging": "Aging",
+    "collected": "Collected",
+    "handedOver": "Handed over",
+    "netCash": "Net",
+    "month": "Month",
+    "status": "Status",
+    "kind": "Type",
+    "subject": "Site/person",
+    "product": "Product",
+    "activeSubstances": "Active substances",
+    "unit": "Unit",
+    "quantity": "Quantity",
+    "period": "Period",
+    "documentType": "Document",
+    "eik": "Company ID"
+  },
+  "totals": "Total",
+  "pageSize": "Per page"
+}

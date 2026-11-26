@@ -40,4 +40,5 @@ export interface CreateClientBodyDto {
    * @nullable
    */
   notes?: string | null;
+  notifyByEmail?: boolean;
 }

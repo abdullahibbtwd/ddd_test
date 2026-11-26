@@ -1,0 +1,56 @@
+{
+  "title": "Food",
+  "emDash": "—",
+  "sep": " · ",
+  "colon": ": ",
+  "activeYes": "Yes",
+  "activeNo": "No",
+  "tabs": {
+    "schedules": "Schedules",
+    "records": "Samples"
+  },
+  "newSchedule": "New schedule",
+  "newRecord": "New sample",
+  "emptySchedules": "No schedules.",
+  "emptyRecords": "No samples.",
+  "save": "Save",
+  "cancel": "Cancel",
+  "columns": {
+    "site": "Site",
+    "service": "Service",
+    "cadence": "Period (months)",
+    "nextDue": "Next due",
+    "active": "Active",
+    "collectedAt": "Collected",
+    "description": "Description",
+    "lab": "Laboratory",
+    "result": "Result"
+  },
+  "fields": {
+    "site": "Site",
+    "serviceType": "Service type",
+    "cadenceMonths": "Period (months)",
+    "nextDueAt": "Next due date",
+    "active": "Active",
+    "notes": "Notes",
+    "schedule": "Schedule",
+    "collectedAt": "Collection date",
+    "sampleDescription": "Sample description",
+    "labName": "Laboratory",
+    "resultStatus": "Result status",
+    "resultReceivedAt": "Result date",
+    "resultSummary": "Summary",
+    "resultFile": "Result file"
+  },
+  "result": {
+    "PENDING": "Pending",
+    "CONFORMING": "Conforming",
+    "NON_CONFORMING": "Non-conforming"
+  },
+  "frozen": "The sample is locked after a result has been entered.",
+  "toast": {
+    "scheduleCreated": "Schedule created.",
+    "recordCreated": "Sample recorded.",
+    "updated": "Record saved."
+  }
+}

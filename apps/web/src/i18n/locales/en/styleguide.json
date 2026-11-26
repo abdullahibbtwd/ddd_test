@@ -1,0 +1,132 @@
+{
+  "title": "Style guide",
+  "intro": "Development only. Tokens and all base components of DD CRM.",
+  "sections": {
+    "colors": "Colors",
+    "type": "Typography",
+    "buttons": "Buttons",
+    "forms": "Forms",
+    "status": "Statuses",
+    "table": "Table",
+    "tabs": "Tabs",
+    "filters": "Filters and pagination",
+    "empty": "Empty state",
+    "feedback": "Dialogs and toasts",
+    "api": "API connection"
+  },
+  "colors": {
+    "bg": "Page background",
+    "surface": "Surface",
+    "border": "Border",
+    "ink": "Primary text",
+    "inkMuted": "Secondary text",
+    "accent": "Accent",
+    "accentHover": "Accent hover",
+    "accentTint": "Accent tint",
+    "okBg": "Success, background",
+    "okInk": "Success, text",
+    "warnBg": "Warning, background",
+    "warnInk": "Warning, text",
+    "badBg": "Error, background",
+    "badInk": "Error, text",
+    "neutralBg": "Neutral, background",
+    "neutralInk": "Neutral, text"
+  },
+  "type": {
+    "pageTitle": "Page title",
+    "pageTitleSpec": "24 px, 600, -0.02 em",
+    "sectionHeader": "Section header",
+    "sectionHeaderSpec": "15 px, 600",
+    "body": "Body text and table cells: Golden Apple Restaurant, 18 Vitosha St, Sofia.",
+    "bodySpec": "14 px, 400, line-height 1.5",
+    "label": "Label and column header",
+    "labelSpec": "12 px, 500, +0.04 em, muted",
+    "num": "INV-2026-000142 · 1,250.00 BGN",
+    "numSpec": "JetBrains Mono, tabular figures"
+  },
+  "buttons": {
+    "primary": "New client",
+    "secondary": "Export",
+    "ghost": "Cancel",
+    "disabled": "Unavailable"
+  },
+  "form": {
+    "name": "Site name",
+    "nameValue": "Golden Apple Restaurant",
+    "eik": "Company ID",
+    "eikValue": "12345",
+    "eikError": "Company ID must contain 9 or 13 digits.",
+    "eikHint": "Example: 204567891",
+    "type": "Site type",
+    "typePlaceholder": "Select type",
+    "typeRestaurant": "Restaurant",
+    "typeHotel": "Hotel",
+    "typeWarehouse": "Warehouse",
+    "notes": "Access notes",
+    "notesValue": "Access via the back yard; doorman after 18:00.",
+    "reminder": "Send an email reminder before the visit",
+    "save": "Save client"
+  },
+  "status": {
+    "ok": "Paid",
+    "warn": "Partially paid",
+    "bad": "Overdue",
+    "neutral": "Draft"
+  },
+  "table": {
+    "number": "Invoice no.",
+    "client": "Client",
+    "date": "Date",
+    "status": "Status",
+    "amount": "Amount",
+    "due": "Due",
+    "openAria": "Open invoice {{number}}"
+  },
+  "drawer": {
+    "title": "Invoice {{number}}",
+    "description": "{{client}}",
+    "client": "Client",
+    "date": "Issue date",
+    "amount": "Total amount",
+    "due": "Outstanding",
+    "note": "Service: spring insect control of kitchen and warehouse."
+  },
+  "tabs": {
+    "overview": "Overview",
+    "visits": "Visits",
+    "documents": "Documents",
+    "overviewBody": "Three active sites, last visit on 12 Nov 2026.",
+    "visitsBody": "Next visit: 3 Dec 2026, 09:30.",
+    "documentsBody": "Agreement from 15 Jan 2026 and two certificates."
+  },
+  "filters": {
+    "search": "Search",
+    "searchPlaceholder": "Name, company ID, or invoice",
+    "status": "Status",
+    "statusAll": "All",
+    "reset": "Clear filters"
+  },
+  "empty": {
+    "message": "No clients have been added yet.",
+    "action": "Add client"
+  },
+  "feedback": {
+    "openDrawer": "Open panel",
+    "openConfirm": "Delete client",
+    "toastOk": "Show success",
+    "toastError": "Show error",
+    "confirmTitle": "Delete client “Golden Apple”?",
+    "confirmDescription": "This action cannot be undone. Related invoices are kept.",
+    "confirmAction": "Delete",
+    "toastOkMessage": "Client saved.",
+    "toastErrorMessage": "The invoice could not be sent. Please try again."
+  },
+  "api": {
+    "label": "API status",
+    "url": "URL",
+    "checking": "Checking…",
+    "ok": "Connected",
+    "error": "Unavailable",
+    "retry": "Check again"
+  }
+}

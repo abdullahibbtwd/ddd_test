@@ -8,6 +8,8 @@ describe("queues", () => {
       EMAIL: "email",
       PDF: "pdf",
       NOTIFICATIONS: "notifications",
+      INVOICE_EMAIL: "invoice-email",
+      PAYMENT_REMINDER: "payment-reminder",
     });
   });
 

@@ -1,0 +1,53 @@
+{
+  "bell": {
+    "label": "Notifications",
+    "empty": "No unread notifications.",
+    "emptyHint": "You're all caught up for now.",
+    "unreadCount": "{{count}} unread",
+    "seeAll": "See all",
+    "close": "Close"
+  },
+  "page": {
+    "title": "Notifications",
+    "description": "Reminders for certificates, agreements, schedules, and overdue invoices.",
+    "empty": "No notifications.",
+    "unreadOnly": "Unread only",
+    "kind": "Type",
+    "kindAll": "All types",
+    "priority": "Priority",
+    "priorityAll": "All",
+    "dismiss": "Dismiss",
+    "markAll": "Mark all as read",
+    "summaryTitle": "Summary",
+    "summaryHint": "Notification counts for the period. No content and no addresses.",
+    "clientContact": "To clients",
+    "unread": "Unread",
+    "read": "Read",
+    "dismissed": "Dismissed"
+  },
+  "priority": {
+    "NORMAL": "Normal",
+    "HIGH": "High"
+  },
+  "kinds": {
+    "CERTIFICATE_EXPIRING": {
+      "title": "Health certificate expiring",
+      "body": "Certificate for site {{siteName}} expires on {{expiresAt}}."
+    },
+    "AGREEMENT_EXPIRING": {
+      "title": "Agreement expiring",
+      "body": "The agreement for {{siteName}} expires on {{expiresAt}}."
+    },
+    "FOOD_SCHEDULE_DUE": {
+      "title": "Food schedule due",
+      "body": "The schedule for {{siteName}} is due on {{dueDate}}."
+    },
+    "INVOICE_OVERDUE": {
+      "title": "Overdue invoice",
+      "body": "Invoice {{invoiceNumber}} was due on {{dueDate}}."
+    }
+  },
+  "clientBody": {
+    "AGREEMENT_EXPIRING": "Your agreement for {{siteName}} expires on {{expiresAt}}."
+  }
+}

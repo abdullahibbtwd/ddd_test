@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SitesPage } from "./sites-page";
+import { SitesPage } from "./-sites-page";
 
 type SitesSearch = {
   new?: string;

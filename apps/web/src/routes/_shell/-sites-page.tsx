@@ -27,6 +27,8 @@ import {
   getSitesControllerListQueryKey,
   getSitesControllerMapQueryKey,
   sitesControllerGetOne,
+  useCertifiedEmployeesControllerCertifiedEmployees,
+  useCertifiedEmployeesControllerCounts,
   useSitesControllerCreate,
   useSitesControllerDuplicates,
   useSitesControllerList,
@@ -39,6 +41,14 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Drawer } from "@/components/drawer";
 import { EmptyState } from "@/components/empty-state";
 import { FilterBar } from "@/components/filter-bar";
+import {
+  ListSearchInput,
+  listFilterControlClass,
+  MobileListCard,
+  PrimaryNewButton,
+  ResponsiveList,
+  SoftPill,
+} from "@/components/list-chrome";
 import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
@@ -47,7 +57,6 @@ import { SiteLocationPicker, SitesMap } from "@/components/sites-map";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -65,7 +74,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { buildDuplicateUiState } from "./clients-duplicates";
+import { buildDuplicateUiState } from "./-clients-duplicates";
 import { SitesSubscriptionPanel } from "./-sites-subscription-panel";
 import { SitesVisitsPanel } from "./-sites-visits-panel";
 import { cn } from "@/lib/utils";
@@ -501,88 +510,78 @@ export function SitesPage() {
                 {t("viewMap")}
               </button>
             </div>
-            <Button onClick={() => setDrawerTarget({ mode: "create" })}>{t("newSite")}</Button>
+            <PrimaryNewButton onClick={() => setDrawerTarget({ mode: "create" })}>
+              {t("newSite")}
+            </PrimaryNewButton>
           </div>
         }
       />
 
       <FilterBar className="flex-wrap">
-        <div className="space-y-1.5">
-          <Label htmlFor="sites-search">{t("filters.search")}</Label>
-          <Input
-            id="sites-search"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder={t("filters.searchPlaceholder")}
-            className="w-56"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.area")}</Label>
-          <Select
-            value={areaId || "__all"}
-            onValueChange={(v) => {
-              setAreaId(v === "__all" ? "" : v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-44">
-              <SelectValue placeholder={t("filters.areaAll")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all">{t("filters.areaAll")}</SelectItem>
-              {fieldAreas.map((a) => (
-                <SelectItem key={a.id} value={a.id}>
-                  {a.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.type")}</Label>
-          <Select
-            value={siteTypeId || "__all"}
-            onValueChange={(v) => {
-              setSiteTypeId(v === "__all" ? "" : v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-44">
-              <SelectValue placeholder={t("filters.typeAll")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all">{t("filters.typeAll")}</SelectItem>
-              {siteTypes.map((ty) => (
-                <SelectItem key={ty.id} value={ty.id}>
-                  {ty.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.status")}</Label>
-          <Select
-            value={statusFilter}
-            onValueChange={(v) => {
-              setStatusFilter(v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ACTIVE">{t("filters.statusActive")}</SelectItem>
-              <SelectItem value="TERMINATED">{t("filters.statusTerminated")}</SelectItem>
-              <SelectItem value="ALL">{t("filters.statusAll")}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <ListSearchInput
+          id="sites-search"
+          aria-label={t("filters.search")}
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          placeholder={t("filters.searchPlaceholder")}
+        />
+        <Select
+          value={areaId || "__all"}
+          onValueChange={(v) => {
+            setAreaId(v === "__all" ? "" : v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger aria-label={t("filters.area")} className={cn(listFilterControlClass, "w-full sm:w-44")}>
+            <SelectValue placeholder={t("filters.areaAll")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all">{t("filters.areaAll")}</SelectItem>
+            {fieldAreas.map((a) => (
+              <SelectItem key={a.id} value={a.id}>
+                {a.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={siteTypeId || "__all"}
+          onValueChange={(v) => {
+            setSiteTypeId(v === "__all" ? "" : v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger aria-label={t("filters.type")} className={cn(listFilterControlClass, "w-full sm:w-44")}>
+            <SelectValue placeholder={t("filters.typeAll")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all">{t("filters.typeAll")}</SelectItem>
+            {siteTypes.map((ty) => (
+              <SelectItem key={ty.id} value={ty.id}>
+                {ty.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={statusFilter}
+          onValueChange={(v) => {
+            setStatusFilter(v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger aria-label={t("filters.status")} className={cn(listFilterControlClass, "w-full sm:w-40")}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ACTIVE">{t("filters.statusActive")}</SelectItem>
+            <SelectItem value="TERMINATED">{t("filters.statusTerminated")}</SelectItem>
+            <SelectItem value="ALL">{t("filters.statusAll")}</SelectItem>
+          </SelectContent>
+        </Select>
       </FilterBar>
 
       {view === "list" ? (
@@ -592,6 +591,8 @@ export function SitesPage() {
           <EmptyState message={t("empty")} />
         ) : (
           <>
+            <ResponsiveList
+              table={
             <Table>
               <TableHeader>
                 <TableRow>
@@ -621,12 +622,14 @@ export function SitesPage() {
                     }}
                   >
                     <TableCell>
-                      <div>{row.name}</div>
+                      <div className="font-medium text-[#0F172A]">{row.name}</div>
                       <div className="text-sm text-ink-muted">{row.client.name}</div>
                     </TableCell>
                     <TableCell>{row.address}</TableCell>
                     <TableCell>{row.area.name}</TableCell>
-                    <TableCell className="hidden min-[640px]:table-cell">{row.type.name}</TableCell>
+                    <TableCell className="hidden min-[640px]:table-cell">
+                      <SoftPill>{row.type.name}</SoftPill>
+                    </TableCell>
                     <TableCell numeric className="num hidden min-[640px]:table-cell">
                       {row.monitoringPointsCount}
                     </TableCell>
@@ -639,6 +642,35 @@ export function SitesPage() {
                 ))}
               </TableBody>
             </Table>
+              }
+              cards={
+              <ul className="space-y-3">
+                {items.map((row) => (
+                  <li key={row.id}>
+                    <MobileListCard onClick={() => setDrawerTarget({ mode: "edit", item: row })}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate font-semibold text-[#0F172A]">{row.name}</p>
+                          <p className="truncate text-xs text-ink-muted">{row.client.name}</p>
+                        </div>
+                        <StatusBadge variant={row.status === SiteStatus.ACTIVE ? "ok" : "neutral"}>
+                          {t(`status.${row.status}`)}
+                        </StatusBadge>
+                      </div>
+                      <p className="mt-2 truncate text-sm text-[#64748B]">{row.address}</p>
+                      <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                        <SoftPill>{row.type.name}</SoftPill>
+                        <span className="text-xs text-[#64748B]">{row.area.name}</span>
+                        <span className="ml-auto text-xs tabular-nums text-[#94A3B8]">
+                          {t("columns.points")}: {row.monitoringPointsCount}
+                        </span>
+                      </div>
+                    </MobileListCard>
+                  </li>
+                ))}
+              </ul>
+              }
+            />
             <Pagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />
           </>
         )
@@ -990,14 +1022,30 @@ export function SitesPage() {
                 disabled={readOnly}
               />
             </FormField>
-            <FormField label={t("drawer.points")}>
-              <Input
-                value={points}
-                onChange={(e) => setPoints(e.target.value)}
-                className="num"
-                disabled={readOnly}
+            {canManage ? (
+              <section className="space-y-2 rounded-none" data-testid="site-monitoring-section">
+                <p className="text-sm text-ink-muted">
+                  {t("drawer.pointsSection", { count: points || "0" })}
+                </p>
+                <FormField label={t("drawer.points")}>
+                  <Input
+                    value={points}
+                    onChange={(e) => setPoints(e.target.value)}
+                    className="num"
+                    disabled={readOnly}
+                    data-testid="site-monitoring-count"
+                  />
+                </FormField>
+                <p className="text-xs text-ink-muted">{t("drawer.pointsHint")}</p>
+              </section>
+            ) : null}
+            {editing ? (
+              <SiteCertificatesSection
+                siteId={editing.id}
+                canManage={canManage}
+                isField={isField}
               />
-            </FormField>
+            ) : null}
             <FormField label={t("drawer.notes")}>
               <Textarea
                 value={notes}
@@ -1041,4 +1089,77 @@ export function SitesPage() {
       />
     </div>
   );
+}
+
+/** Muted certificates block on the site «Данни» tab (ADMIN/OFFICE counts; FIELD redacted list). */
+function SiteCertificatesSection({
+  siteId,
+  canManage,
+  isField,
+}: {
+  siteId: string;
+  canManage: boolean;
+  isField: boolean;
+}) {
+  const { t } = useTranslation("sites");
+  const countsQuery = useCertifiedEmployeesControllerCounts(siteId, {
+    query: { enabled: canManage },
+  });
+  const fieldQuery = useCertifiedEmployeesControllerCertifiedEmployees(
+    siteId,
+    undefined,
+    { query: { enabled: isField } },
+  );
+
+  if (canManage) {
+    const counts = countsQuery.data?.data;
+    return (
+      <section className="space-y-2" data-testid="site-certificates-section">
+        <h2 className="type-section text-ink-muted">{t("drawer.certificatesSection")}</h2>
+        <p className="text-sm text-ink-muted">
+          {t("drawer.certificatesCounts", {
+            current: counts?.current ?? "—",
+            expiring: counts?.expiring ?? "—",
+            expired: counts?.expired ?? "—",
+          })}
+        </p>
+        <Link
+          to="/certificates"
+          search={{ siteId, employeeId: undefined, status: undefined, expiringWithin: undefined }}
+          className="text-sm underline text-ink-muted"
+          data-testid="site-certificates-link"
+        >
+          {t("drawer.certificatesLink")}
+        </Link>
+      </section>
+    );
+  }
+
+  if (isField) {
+    const items = fieldQuery.data?.data.items ?? [];
+    return (
+      <section className="space-y-2" data-testid="site-certificates-section">
+        <h2 className="type-section text-ink-muted">{t("drawer.certificatesSection")}</h2>
+        {items.length === 0 ? (
+          <p className="text-sm text-ink-muted">{t("drawer.certificatesFieldEmpty")}</p>
+        ) : (
+          <ul className="space-y-1 text-sm">
+            {items.map((item) => (
+              <li key={item.id} data-testid="site-certified-employee">
+                {t("drawer.certificatesFieldRow", {
+                  name: item.fullName,
+                  renewal: item.nextRenewalAt
+                    ? t("drawer.certificatesFieldRenewal", { date: item.nextRenewalAt })
+                    : "",
+                  title: t("drawer.certificatesFieldTitle", { title: item.jobTitle }),
+                })}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    );
+  }
+
+  return null;
 }

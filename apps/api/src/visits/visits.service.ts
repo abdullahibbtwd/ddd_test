@@ -59,15 +59,8 @@ type VisitRow = {
   clientMutationId: string;
   site: { id: string; name: string };
   employees: VisitEmployeeRow[];
+  invoiceLinks?: Array<{ invoiceId: string }>;
 };
-
-/**
- * TODO(Phase 6): replace stub with a real check against the invoice link.
- * Until invoicing exists, OFFICE/ADMIN may always edit/cancel (never "invoiced").
- */
-function isVisitInvoiced(_visitId: string): boolean {
-  return false;
-}
 
 function moneyEqual(a: Decimal | number | string, b: number): boolean {
   return Number(a).toFixed(2) === Number(b).toFixed(2);
@@ -104,6 +97,7 @@ export class VisitsService {
       include: { user: { select: { id: true, name: true } } },
       orderBy: [{ roleOnVisit: "asc" }, { userId: "asc" }],
     },
+    invoiceLinks: { select: { invoiceId: true }, take: 1 },
   };
 
   private toItem(row: VisitRow): VisitItem {
@@ -130,6 +124,7 @@ export class VisitsService {
         fullName: e.user.name,
         role: e.roleOnVisit,
       })),
+      invoiceId: row.invoiceLinks?.[0]?.invoiceId ?? null,
     };
   }
 
@@ -491,7 +486,7 @@ export class VisitsService {
     this.assertOwner(user, existing.createdById);
     this.assertFieldEditWindow(user, existing.createdAt);
 
-    if (isVisitInvoiced(id)) {
+    if (await this.isVisitInvoiced(id)) {
       throw new AppException(ErrorCode.FORBIDDEN, "Visit is invoiced and cannot be edited");
     }
 
@@ -602,7 +597,7 @@ export class VisitsService {
     this.assertOwner(user, existing.createdById);
     this.assertFieldEditWindow(user, existing.createdAt);
 
-    if (isVisitInvoiced(id)) {
+    if (await this.isVisitInvoiced(id)) {
       throw new AppException(ErrorCode.FORBIDDEN, "Visit is invoiced and cannot be cancelled");
     }
 
@@ -662,5 +657,14 @@ export class VisitsService {
       return false;
     };
     return walk(error);
+  }
+
+  /** True when the visit is linked to any invoice (draft or issued). */
+  private async isVisitInvoiced(visitId: string): Promise<boolean> {
+    const link = await this.prisma.invoiceVisit.findFirst({
+      where: { visitId },
+      select: { id: true },
+    });
+    return link != null;
   }
 }

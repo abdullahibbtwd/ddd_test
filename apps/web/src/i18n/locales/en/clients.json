@@ -1,0 +1,91 @@
+{
+  "title": "Clients",
+  "empty": "No clients.",
+  "newClient": "New client",
+  "emDash": "—",
+  "open": "Open",
+  "filters": {
+    "search": "Search",
+    "searchPlaceholder": "Search name, company ID, phone or email…",
+    "kind": "Type",
+    "kindAll": "All",
+    "kindCompany": "Company",
+    "kindIndividual": "Individual",
+    "status": "Status",
+    "statusActive": "Active",
+    "statusArchived": "Archived",
+    "statusAll": "All"
+  },
+  "columns": {
+    "name": "Name",
+    "eik": "Company ID",
+    "kind": "Type",
+    "phone": "Phone",
+    "sites": "Sites",
+    "status": "Status"
+  },
+  "tabs": {
+    "data": "Details",
+    "sites": "Sites"
+  },
+  "sitesTab": {
+    "empty": "No sites for this client.",
+    "newSite": "New site"
+  },
+  "kind": {
+    "COMPANY": "Company",
+    "INDIVIDUAL": "Individual"
+  },
+  "status": {
+    "active": "Active",
+    "archived": "Archived"
+  },
+  "paymentMethod": {
+    "CASH": "Cash",
+    "BANK_TRANSFER": "Bank transfer",
+    "CARD": "Card",
+    "OTHER": "Other",
+    "none": "—"
+  },
+  "drawer": {
+    "createTitle": "New client",
+    "editTitle": "Edit client",
+    "sectionBasics": "Basic information",
+    "sectionContacts": "Contacts and payment",
+    "kind": "Type",
+    "nameCompany": "Company name",
+    "nameIndividual": "Name",
+    "eik": "Company ID",
+    "vatNumber": "VAT number",
+    "registeredAddress": "Registered address",
+    "legalRepresentative": "Legal representative",
+    "phone": "Phone",
+    "email": "Email",
+    "paymentMethod": "Payment method",
+    "paymentMethodNone": "No preference",
+    "notes": "Notes",
+    "notifyByEmail": "Notify the client by email",
+    "actionsSection": "Actions",
+    "archive": "Archive",
+    "activate": "Activate"
+  },
+  "validation": {
+    "nameRequired": "Name is required.",
+    "eikRequired": "Company ID is required for companies.",
+    "eikInvalid": "Invalid company ID.",
+    "vatInvalid": "Invalid VAT number (BG + 9 or 10 digits).",
+    "emailInvalid": "Invalid email.",
+    "phoneInvalid": "Invalid phone number."
+  },
+  "duplicates": {
+    "sameEik": "A client with this company ID already exists: {{name}}",
+    "similarTitle": "Possible duplicates by name:",
+    "similarItem": "{{name}} · {{eik}}"
+  },
+  "confirm": {
+    "archiveTitle": "Archive client?",
+    "archiveDescription": "{{name}} will be archived and hidden from the list of active clients.",
+    "activateTitle": "Activate client?",
+    "activateDescription": "{{name}} will be active again."
+  }
+}

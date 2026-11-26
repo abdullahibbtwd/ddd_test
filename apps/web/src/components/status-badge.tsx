@@ -10,10 +10,10 @@ const statusBadgeVariants = cva(
   {
     variants: {
       variant: {
-        ok: "bg-ok-bg text-ok-ink",
-        warn: "bg-warn-bg text-warn-ink",
-        bad: "bg-bad-bg text-bad-ink",
-        neutral: "bg-neutral-bg text-neutral-ink",
+        ok: "bg-[#ECFDF5] text-[#047857]",
+        warn: "bg-[#FFFBEB] text-[#B45309]",
+        bad: "bg-[#FEF2F2] text-[#B91C1C]",
+        neutral: "bg-[#F1F5F9] text-[#475569]",
       } satisfies Record<StatusVariant, string>,
     },
     defaultVariants: { variant: "neutral" },

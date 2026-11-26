@@ -55,6 +55,7 @@ export class ClientsService {
       email: row.email,
       preferredPaymentMethod: row.preferredPaymentMethod,
       notes: row.notes,
+      notifyByEmail: row.notifyByEmail,
       isActive: row.isActive,
       activeSiteCount: row._count?.sites ?? 0,
       createdAt: row.createdAt.toISOString(),
@@ -232,6 +233,7 @@ export class ClientsService {
           email,
           preferredPaymentMethod: body.preferredPaymentMethod ?? null,
           notes: body.notes ?? null,
+          notifyByEmail: body.notifyByEmail ?? false,
           isActive: true,
         },
         include: this.activeSiteCountInclude,
@@ -314,6 +316,7 @@ export class ClientsService {
       data.preferredPaymentMethod = body.preferredPaymentMethod;
     }
     if (body.notes !== undefined) data.notes = body.notes;
+    if (body.notifyByEmail !== undefined) data.notifyByEmail = body.notifyByEmail;
     if (archiving || reactivating) data.isActive = body.isActive;
 
     try {

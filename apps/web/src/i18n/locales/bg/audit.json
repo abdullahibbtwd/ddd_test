@@ -44,7 +44,10 @@
     "PASSWORD_CHANGED": "Смяна на парола",
     "PASSWORD_RESET_BY_ADMIN": "Нулиране на парола от администратор",
     "ACCOUNT_LOCKED": "Заключен акаунт",
-    "REFRESH_REUSE_DETECTED": "Повторна употреба на refresh токен"
+    "REFRESH_REUSE_DETECTED": "Повторна употреба на refresh токен",
+    "READ_PII": "Четене на лични данни",
+    "ERASED": "Анонимизация",
+    "EXPORT": "Експорт на лични данни"
   },
   "entityTypes": {
     "users": "Потребител",
@@ -57,9 +60,51 @@
     "site_types": "Вид обект",
     "subscriptions": "Абонамент",
     "visits": "Посещение",
-    "visit_employees": "Служител на посещение"
+    "visit_employees": "Служител на посещение",
+    "invoices": "Фактура",
+    "invoice_lines": "Ред от фактура",
+    "invoice_visit": "Посещение към фактура",
+    "email_events": "Имейл събитие",
+    "payments": "Плащане",
+    "cash_handovers": "Предаване на каса",
+    "products": "Препарат",
+    "visit_products": "Препарат на посещение",
+    "monitoring_points": "Точка NEOT/POT",
+    "monitoring_point_checks": "Проверка на точка",
+    "client_employees": "Служител на клиент",
+    "health_certificates": "Здравен сертификат",
+    "agreements": "Договор",
+    "food_sampling_schedules": "График ХВП",
+    "food_sample_records": "Проба ХВП",
+    "stored_files": "Файл",
+    "notifications": "Известие"
   },
   "enums": {
+    "PaymentMethod": {
+      "CASH": "В брой",
+      "BANK_TRANSFER": "Банков превод",
+      "CARD": "Карта",
+      "OTHER": "Друго"
+    },
+    "EmailEventKind": {
+      "INVOICE": "Фактура",
+      "REMINDER": "Напомняне",
+      "NOTIFICATION": "Известие"
+    },
+    "NotificationKind": {
+      "CERTIFICATE_EXPIRING": "Изтичащ сертификат",
+      "AGREEMENT_EXPIRING": "Изтичащ договор",
+      "FOOD_SCHEDULE_DUE": "Дължим график ХВП",
+      "INVOICE_OVERDUE": "Просрочена фактура"
+    },
+    "NotificationPriority": {
+      "NORMAL": "Обичаен",
+      "HIGH": "Висок"
+    },
+    "NotificationRecipientType": {
+      "SYSTEM_USER": "Служител",
+      "CLIENT_CONTACT": "Контакт на клиент"
+    },
     "SubscriptionFrequency": {
       "MONTHLY": "Всеки месец",
       "EVERY_2_MONTHS": "На всеки 2 месеца",
@@ -83,6 +128,43 @@
     "EmployeeRoleOnVisit": {
       "LEAD": "Водещ",
       "ASSIST": "Асистент"
+    },
+    "InvoiceStatus": {
+      "DRAFT": "Чернова",
+      "ISSUED": "Издадена",
+      "CANCELLED_BY_CREDIT_NOTE": "Анулирана с кредитно известие"
+    },
+    "DocumentType": {
+      "INVOICE": "Фактура",
+      "CREDIT_NOTE": "Кредитно известие",
+      "DEBIT_NOTE": "Дебитно известие"
+    },
+    "ProductFormulation": {
+      "LIQUID": "Течност",
+      "POWDER": "Прах",
+      "GEL": "Гел",
+      "BAIT": "Примамка",
+      "TRAP": "Капан",
+      "AEROSOL": "Аерозол",
+      "OTHER": "Друго"
+    },
+    "MeasurementUnit": {
+      "G": "г",
+      "KG": "кг",
+      "ML": "мл",
+      "L": "л",
+      "PIECE": "бр."
+    },
+    "MonitoringPointType": {
+      "NEOT": "NEOT",
+      "POT": "POT"
+    },
+    "MonitoringPointStatus": {
+      "OK": "ОК",
+      "ACTIVITY": "Активност",
+      "DAMAGED": "Повредена",
+      "MISSING": "Липсва",
+      "OTHER": "Друго"
     }
   },
   "sources": {
@@ -143,6 +225,74 @@
     "client_mutation_id": "Идемпотентен ключ",
     "visit_id": "Посещение",
     "user_id": "Потребител",
-    "role_on_visit": "Роля на посещението"
+    "role_on_visit": "Роля на посещението",
+    "number": "Номер",
+    "issued_at": "Издадена на",
+    "issued_by": "Издадена от",
+    "client_legal_name": "Правно име",
+    "client_eik": "ЕИК (снимка)",
+    "client_vat_number": "ДДС номер (снимка)",
+    "client_registered_address": "Адрес (снимка)",
+    "client_legal_representative": "МОЛ (снимка)",
+    "currency": "Валута",
+    "net_amount": "Нето",
+    "vat_amount": "ДДС",
+    "gross_amount": "Общо",
+    "invoice_id": "Фактура",
+    "line_no": "Номер на ред",
+    "description": "Описание",
+    "quantity": "Количество",
+    "unit_price": "Ед. цена",
+    "vat_rate": "ДДС ставка",
+    "line_total": "Сума на ред",
+    "next_value": "Следващ номер",
+    "document_type": "Вид документ",
+    "references_invoice_id": "Към фактура",
+    "credit_note_reason": "Основание за кредитно известие",
+    "billing_month": "Месец на фактуриране",
+    "client_email": "Имейл (снимка)",
+    "client_phone": "Телефон (снимка)",
+    "email_sent_at": "Имейл изпратен на",
+    "email_last_error": "Последна грешка при имейл",
+    "to_address": "До адрес",
+    "sent_at": "Изпратен на",
+    "failed_at": "Неуспешен на",
+    "error": "Грешка",
+    "job_id": "Задача",
+    "active_substances": "Активни вещества",
+    "formulation": "Формулация",
+    "permit_number": "Разрешително №",
+    "permit_holder": "Притежател на разрешително",
+    "antidote": "Антидот",
+    "ventilation_period": "Вентилационен период",
+    "exposure_period": "Период на експозиция",
+    "recommendations": "Препоръки",
+    "default_dosage": "Доза по подразбиране",
+    "default_unit": "Единица по подразбиране",
+    "archived": "Архивиран",
+    "product_id": "Препарат",
+    "unit": "Единица",
+    "label": "Етикет",
+    "location": "Местоположение",
+    "type": "Тип",
+    "active": "Активна",
+    "point_id": "Точка",
+    "checked_at": "Дата на проверка",
+    "photo_file_id": "Снимка",
+    "visit_products_snapshot": "Снимка на препарати",
+    "notify_by_email": "Имейл известие към клиента",
+    "recipient_user_id": "Получател",
+    "recipient_client_id": "Клиент получател",
+    "recipient_type": "Вид получател",
+    "entity_type": "Тип запис",
+    "entity_id": "Запис",
+    "threshold_day": "Праг (дни)",
+    "priority": "Приоритет",
+    "title_i18n_key": "Заглавие",
+    "body_i18n_key": "Текст",
+    "body_params": "Параметри",
+    "read_at": "Прочетено на",
+    "dismissed_at": "Скрито на",
+    "notification_id": "Известие"
   }
 }

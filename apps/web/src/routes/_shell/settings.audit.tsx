@@ -6,9 +6,13 @@ import type { AuditLogPageDtoOutputItemsItem } from "@/api/generated/model";
 import { AuditDrawer } from "@/components/audit/audit-drawer";
 import { EmptyState } from "@/components/empty-state";
 import { FilterBar } from "@/components/filter-bar";
+import {
+  listFilterControlClass,
+  MobileListCard,
+  ResponsiveList,
+} from "@/components/list-chrome";
 import { Pagination } from "@/components/pagination";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -24,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_shell/settings/audit")({
   component: AuditJournalPage,
@@ -104,89 +109,77 @@ function AuditJournalPage() {
   return (
     <div>
       <FilterBar>
-        <div className="space-y-1.5">
-          <Label htmlFor="audit-actor">{t("filters.user")}</Label>
-          <Input
-            id="audit-actor"
-            value={actorUserId}
-            onChange={(e) => {
-              setActorUserId(e.target.value);
-              setPage(1);
-            }}
-            placeholder={t("filters.userPlaceholder")}
-            className="w-48 font-mono text-xs"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.action")}</Label>
-          <Select
-            value={action || "__all"}
-            onValueChange={(v) => {
-              setAction(v === "__all" ? "" : v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-52">
-              <SelectValue placeholder={t("filters.actionPlaceholder")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all">{t("filters.actionPlaceholder")}</SelectItem>
-              {ACTION_OPTIONS.map((opt) => (
-                <SelectItem key={opt} value={opt}>
-                  {actionLabel(opt)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.entityType")}</Label>
-          <Select
-            value={entityType || "__all"}
-            onValueChange={(v) => {
-              setEntityType(v === "__all" ? "" : v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-44">
-              <SelectValue placeholder={t("filters.entityTypePlaceholder")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all">{t("filters.entityTypePlaceholder")}</SelectItem>
-              {ENTITY_OPTIONS.map((opt) => (
-                <SelectItem key={opt} value={opt}>
-                  {entityLabel(opt)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="audit-from">{t("filters.from")}</Label>
-          <Input
-            id="audit-from"
-            type="date"
-            value={from}
-            onChange={(e) => {
-              setFrom(e.target.value);
-              setPage(1);
-            }}
-            className="w-40"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="audit-to">{t("filters.to")}</Label>
-          <Input
-            id="audit-to"
-            type="date"
-            value={to}
-            onChange={(e) => {
-              setTo(e.target.value);
-              setPage(1);
-            }}
-            className="w-40"
-          />
-        </div>
+        <Input
+            aria-label={t("filters.user")}
+          id="audit-actor"
+          value={actorUserId}
+          onChange={(e) => {
+            setActorUserId(e.target.value);
+            setPage(1);
+          }}
+          placeholder={t("filters.userPlaceholder")}
+          className={cn(listFilterControlClass, "w-full sm:w-48 font-mono text-xs")}
+        />
+        <Select
+          value={action || "__all"}
+          onValueChange={(v) => {
+            setAction(v === "__all" ? "" : v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger aria-label={t("filters.action")} className={cn(listFilterControlClass, "w-full sm:w-52")}>
+            <SelectValue placeholder={t("filters.actionPlaceholder")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all">{t("filters.actionPlaceholder")}</SelectItem>
+            {ACTION_OPTIONS.map((opt) => (
+              <SelectItem key={opt} value={opt}>
+                {actionLabel(opt)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={entityType || "__all"}
+          onValueChange={(v) => {
+            setEntityType(v === "__all" ? "" : v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger aria-label={t("filters.entityType")} className={cn(listFilterControlClass, "w-full sm:w-44")}>
+            <SelectValue placeholder={t("filters.entityTypePlaceholder")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all">{t("filters.entityTypePlaceholder")}</SelectItem>
+            {ENTITY_OPTIONS.map((opt) => (
+              <SelectItem key={opt} value={opt}>
+                {entityLabel(opt)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Input
+            aria-label={t("filters.from")}
+          id="audit-from"
+          type="date"
+          value={from}
+          onChange={(e) => {
+            setFrom(e.target.value);
+            setPage(1);
+          }}
+          className={cn(listFilterControlClass, "w-full sm:w-40")}
+        />
+        <Input
+            aria-label={t("filters.to")}
+          id="audit-to"
+          type="date"
+          value={to}
+          onChange={(e) => {
+            setTo(e.target.value);
+            setPage(1);
+          }}
+          className={cn(listFilterControlClass, "w-full sm:w-40")}
+        />
       </FilterBar>
 
       {isLoading ? (
@@ -197,6 +190,8 @@ function AuditJournalPage() {
         <EmptyState message={t("empty")} />
       ) : (
         <>
+          <ResponsiveList
+            table={
           <Table>
             <TableHeader>
               <TableRow>
@@ -240,6 +235,34 @@ function AuditJournalPage() {
               ))}
             </TableBody>
           </Table>
+            }
+            cards={
+            <ul className="space-y-3">
+              {items.map((row) => (
+                <li key={row.id}>
+                  <MobileListCard onClick={() => setSelected(row)}>
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="min-w-0 truncate font-semibold text-[#0F172A]">
+                        {actionLabel(row.action)}
+                      </p>
+                      <span className="shrink-0 text-xs tabular-nums text-[#64748B]">
+                        {formatWhen(row.occurredAt)}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 truncate text-sm text-[#64748B]">
+                      {row.actorName ?? t("drawer.system")} · {entityLabel(row.entityType)}
+                      {row.entityId ? (
+                        <span className="ml-1 font-mono text-xs">
+                          {shortId(row.entityId, t("emDash"))}
+                        </span>
+                      ) : null}
+                    </p>
+                  </MobileListCard>
+                </li>
+              ))}
+            </ul>
+            }
+          />
           <Pagination
             page={page}
             pageSize={PAGE_SIZE}

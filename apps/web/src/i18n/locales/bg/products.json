@@ -1,0 +1,83 @@
+{
+  "title": "Препарати",
+  "emDash": "—",
+  "new": "Нов препарат",
+  "empty": "Няма препарати.",
+  "save": "Запази",
+  "archive": "Архивирай",
+  "unarchive": "Възстанови",
+  "archived": "Архив",
+  "active": "Активни",
+  "all": "Всички",
+  "searchPlaceholder": "Търсене по име или вещество…",
+  "columns": {
+    "name": "Име",
+    "substances": "Активни вещества",
+    "formulation": "Формулация",
+    "permit": "Разрешително",
+    "archived": "Архив"
+  },
+  "fields": {
+    "name": "Име",
+    "activeSubstances": "Активни вещества",
+    "activeSubstancesHint": "По едно вещество на ред",
+    "formulation": "Формулация",
+    "permitNumber": "Разрешително №",
+    "permitHolder": "Притежател",
+    "antidote": "Антидот",
+    "ventilationPeriod": "Вентилация",
+    "exposurePeriod": "Експозиция",
+    "recommendations": "Препоръки",
+    "defaultDosage": "Доза по подразбиране",
+    "defaultUnit": "Единица"
+  },
+  "formulations": {
+    "LIQUID": "Течност",
+    "POWDER": "Прах",
+    "GEL": "Гел",
+    "BAIT": "Примамка",
+    "TRAP": "Капан",
+    "AEROSOL": "Аерозол",
+    "OTHER": "Друго"
+  },
+  "units": {
+    "G": "г",
+    "KG": "кг",
+    "ML": "мл",
+    "L": "л",
+    "PIECE": "бр."
+  },
+  "validation": {
+    "nameRequired": "Името трябва да е поне 2 символа."
+  },
+  "visit": {
+    "section": "Препарати",
+    "add": "Добави препарат",
+    "frozen": "Замразено след издаване на фактура",
+    "quantity": "Количество",
+    "unit": "Единица",
+    "notes": "Бележки",
+    "picker": "Препарат",
+    "remove": "Премахни",
+    "empty": "Няма добавени препарати."
+  },
+  "points": {
+    "section": "Точки NEOT/POT",
+    "mark": "Отбележи проверки",
+    "unchecked": "Не е проверена",
+    "frozen": "Замразено след издаване на фактура",
+    "empty": "Няма активни точки за този обект.",
+    "manage": "Управление на точки",
+    "count": "Брой точки: {{count}}",
+    "status": {
+      "OK": "ОК",
+      "ACTIVITY": "Активност",
+      "DAMAGED": "Повредена",
+      "MISSING": "Липсва",
+      "OTHER": "Друго"
+    }
+  },
+  "report": {
+    "download": "Изтегли доклад"
+  }
+}

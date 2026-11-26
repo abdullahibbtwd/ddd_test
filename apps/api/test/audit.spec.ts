@@ -386,7 +386,13 @@ describe("audit log", () => {
     // - auth_sessions: session noise; security events logged explicitly
     // - audit_log: would recurse
     // - _prisma_migrations: Prisma bookkeeping
-    const EXEMPT = new Set(["auth_sessions", "audit_log", "_prisma_migrations"]);
+    // - invoice_counters: singleton numbering row (locked FOR UPDATE); not a business entity
+    const EXEMPT = new Set([
+      "auth_sessions",
+      "audit_log",
+      "_prisma_migrations",
+      "invoice_counters",
+    ]);
 
     const tables = await ctx.db.prisma.$queryRaw<{ tablename: string }[]>`
       SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename

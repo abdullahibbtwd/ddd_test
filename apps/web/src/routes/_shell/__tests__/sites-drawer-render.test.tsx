@@ -76,7 +76,7 @@ vi.mock("@/components/sites-map", () => ({
   SiteLocationPicker: () => <div data-testid="site-location-picker" />,
 }));
 
-import { SitesPage } from "../sites-page";
+import { SitesPage } from "../-sites-page";
 
 /** Hard ceiling — create-drawer open + one defaults refresh must stay well below this. */
 const MAX_RENDERS = 40;

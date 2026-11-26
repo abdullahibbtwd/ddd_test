@@ -1,4 +1,4 @@
-# Decisions (Tasks 1–14)
+# Decisions (Tasks 1–21)
 
 One line of reasoning each. Newest themes last.
 
@@ -145,3 +145,81 @@ One line of reasoning each. Newest themes last.
 - **Cancelled visits ignored** as schedule inputs (same as Task 12 engine contract).
 - **`computeScheduleStatus` unchanged** — ON_DEMAND stays ON_DEMAND even with a visit this month (engine priority before SERVICED).
 - **Pins:** none new for Task 14; `minimumReleaseAge` unchanged.
+
+## Invoicing (Task 15)
+
+- **FIELD has no invoice access** — nav + `canAccessPath` gated to ADMIN/OFFICE only (R-3.04 FIELD issue deferred; payments stay FIELD-visible).
+- **Gapless counter table, not a Postgres SEQUENCE** — `SELECT … FOR UPDATE` on `invoice_counters` so concurrent issue cannot skip or duplicate numbers.
+- **Issued immutability via BEFORE triggers (SQLSTATE `23P02`)** — blocked UPDATE/DELETE never reaches AFTER audit triggers → zero audit rows for rejected mutations.
+- **VAT 20% auto-line on visit link** — working default for suggested lines; final rate policy tied to **Q-accountant**.
+- **HALF_UP at 2 dp, per line then sum** — matches money helpers in `@ddcrm/shared`; subject to Q-accountant confirmation.
+- **No decimal library** — pure decimal strings + BigInt fixed-point in shared (`computeLineTotal` / `computeVatAmount` / `sumLines`); Prisma `Decimal` only at the DB boundary.
+- **Visit ↔ invoice UNIQUE(visit_id)** — a visit may appear on at most one invoice (draft or issued).
+- **Pins:** none new for Task 15; `minimumReleaseAge` unchanged. Do not change `computeScheduleStatus`.
+
+## Invoice documents (Task 16)
+
+- **PDF from issued snapshot only** — never live client/visit/subscription; original and copy differ only by the `ОРИГИНАЛ`/`КОПИЕ` stamp.
+- **Email always queued** — HTTP enqueues BullMQ (`invoice-email`) and returns 202; worker renders PDF + SMTP; deterministic `invoice_email_<id>_<attempt>` job ids.
+- **Credit/debit notes are new documents** — same gapless counter series; credit note cancels original (`ISSUED` → `CANCELLED_BY_CREDIT_NOTE`) in the same tx; debit note leaves original issued.
+- **Operational-column immutability exception** — `email_sent_at` / `email_last_error` (plus `updated_at`) may update on issued invoices; nothing else.
+- **PDFs not stored on disk** — regenerate on every GET/send (cheap; no storage lifecycle).
+- **One numbering series** for invoices + credit + debit notes.
+- **Credit note is the cancellation mechanism** — reason lives on the credit note; original snapshot/financials untouched.
+- **Batch creates drafts only** — issue is a separate human action; batch/issue is per-id, partial failure keeps successes.
+- **Supplier config object** in `apps/api/src/config/supplier.ts` with TODO Phase 13 settings; client must provide real values; accountant confirms wording/layout (**Q-accountant**).
+- **Pins:** none new for Task 16; `minimumReleaseAge` unchanged. No new PDF library or BullMQ pins (reuse Task 3/4 stack).
+
+## Payments (Task 17)
+
+- **Payments are additive rows; balance is computed** — no stored outstanding column; overpay rejected by DB trigger (`23P03` → `PAYMENT_EXCEEDS_OUTSTANDING`).
+- **Cash handovers are a separate table** — employee cash outstanding may be negative (over-handed is legal and visible).
+- **Paid is not an InvoiceStatus** — outstanding == 0 on ISSUED; keeps issued financial immutability intact.
+- **Reminders are queued emails** (`payment-reminder`), not the Phase 11 notification bell.
+- **Payments are INSERT-only in P8** — no reversals/refunds; future reversal row referencing the original payment (P13).
+- **`due_date` is set during issue and never edited** — included in immutability equality lists; issue transition sets it in the same UPDATE; CN/DN inherit.
+- **FIELD pays via visit route only** — `POST /api/visits/:visitId/payments` (CASH, own visit); no access to outstanding report or other users’ cash ledgers.
+- **Pins:** none new for Task 17; `minimumReleaseAge` unchanged.
+
+## Products / service reports / monitoring (Task 18)
+
+- **Product archive, never delete** — partial unique on active names; archival is a boolean + audit row (no reason field).
+- **Freeze boundary = until invoiced** — `visit_products` and `monitoring_point_checks` are editable while the linked invoice is absent or DRAFT; frozen when ISSUED (`23P04`). Same boundary as “until invoiced” applied to child tables.
+- **Snapshot = JSONB on visits** — `visit_products_snapshot` written inside the invoice issue transaction (AFTER UPDATE on invoices → visits only). No separate snapshot table; no never-to-be-invoiced confirm path in this model (snapshots only on issue). PDF reads snapshot if present, else live rows.
+- **Count sync via trigger** — `monitoring_points` AFTER trigger maintains `sites.monitoring_points_count` (cannot drift). Site PATCH count wires to the reconcile helper; UI uses PATCH site.
+- **Checks are visit-scoped only** — no standalone inspection model. `photo_file_id` reserved, unused in P9.
+- **Service report: no series, no email, no storage** — one PDF per visit on demand; minimum data = site + date + treatment_type + ≥1 employee.
+- **Pins:** none new for Task 18; `minimumReleaseAge` unchanged. No new PDF library (reuse Task 4 Gotenberg stack).
+
+## Compliance / GDPR (Task 19 / Phase 10)
+
+- **No EGN anywhere** — standing rule restated; client employees identified by name + job title + site only.
+- **Certificate renewal = new row** — never UPDATE prior dates to renew; history is the row stack; status is computed (`CURRENT`/`EXPIRING`/`EXPIRED`), never stored.
+- **Agreement dual status kept** — stored `ACTIVE|EXPIRED|TERMINATED|RENEWED` captures business decisions; computed display combines calendar expiry with stored status. One renewal per signing (partial unique on `previous_agreement_id`). Frozen after renew.
+- **Food schedule vs record** — separate tables; trigger advances `next_due_at` on record insert when linked; API does not double-update. Result row freezes once not `PENDING`.
+- **No sampler link** — food sample records do not reference a client employee in P10.
+- **READ_PII on every employee/certificate read** — explicit helper in read services (not Prisma middleware); one batched event per request with `meta.entityIds`; audit failure → `READ_PII_AUDIT_FAILED` (read must fail). Not applied to agreements/food.
+- **Erasure is anonymization, not deletion** — CHECK enforces full anonymize in one UPDATE; rows and certificate history kept; document files nulled then deleted. No hard DELETE on these tables (reject trigger).
+- **FIELD redacted certificates** — `GET /api/sites/:siteId/certified-employees`: names + `nextRenewalAt` + computed status; job title always `[скрито]`; produces READ_PII. ADMIN/OFFICE get full titles + counts.
+- **Notifications deferred to Phase 11** — P10 ships expiring/due query endpoints only; no bell, no renewal emails. (Built in Task 20; this note stays as the Phase 10 record.)
+
+## Notifications (Task 20 / Phase 11)
+
+- **Stored rows, not computed on read** — a daily job inserts notification rows. The bell reads the user's unread rows. There is no "should this exist?" check when the list is opened.
+- **Dedup is a partial unique key** — `(recipient, kind, entity, threshold_day)`. Thresholds are exactly 30, 14 and 7 for expiries, and 0 for due/overdue. A second run the same day is a no-op (`ON CONFLICT DO NOTHING`).
+- **Recipient rules live in code, not a table** — `apps/api/src/notifications/rules.ts`. Certificate → office + admin. Agreement → office + admin + client contact when `clients.notify_by_email`. Food schedule → office + the lead on the site's latest active visit. Overdue invoice → office + admin.
+- **Overdue invoice is notified once, not weekly** — `threshold_day = 0`. A sweep the next day does not add another row. R-4.6-04 was not found in the repo; the office already has the outstanding list. Food schedules use the same 0, so a schedule notifies once for its lifetime under this key. Recurrence would need the due date inside the threshold. That was not changed.
+- **Two channels** — system-user email is always enqueued; client-contact email only when the rule includes it and `notify_by_email` is true (default false). The row is committed before the email job. SMTP failure does not roll back the bell item.
+- **System actor** — sweep creates are audited as `source = system`, `actor_user_id = null`, `actor_label = system:notification-sweep`. No reserved user row (it would appear in the user list and interact with the last-admin rule). Email send updates use `source = worker`, same as Tasks 16–17.
+- **Summary is ADMIN-only** — the bell is per user. OFFICE and FIELD can read and update their own rows. They cannot open the aggregate summary, and nobody can read another user's body or a client-contact body through `/me`.
+- **Timezone** — the BullMQ scheduler uses explicit `tz: Europe/Sofia` (`0 7 * * *`). The process timezone is not used.
+- **Pins:** none new for Task 20. `minimumReleaseAge` unchanged. BullMQ's existing `tz` option is enough; no new dependency.
+- **Pins:** none new for Task 19; `minimumReleaseAge` unchanged. No new file-storage or PDF library pins (`stored_files` table is minimal FK registry for Task 4 keys).
+
+## Reports / Excel+PDF export (Task 21 / Phase 12)
+
+- **Reports are live queries, not snapshots** — no `report_runs` table, no scheduled/emailed reports, no stored result sets. JSON paginates; export uses page/batch cursor (500 rows) then writes the file.
+- **ExcelJS 4.4.0 for XLSX; Gotenberg for PDF** — only new export package (named for review). PDF reuses the invoice HTML→Gotenberg path and supplier block. No CSV as a named format.
+- **ADMIN/OFFICE only; FIELD excluded** — CASL `read Report`; nav «Справки»; both JSON and export return 403 for FIELD.
+- **Export safety cap 200,000 rows** (`REPORT_EXPORT_TOO_LARGE` 413) before streaming starts; empty Excel keeps headers; empty PDF is one page «Няма данни за избрания период». Expirations export = `READ_PII` + `EXPORT` (certificate dates).
+- **Pins:** ExcelJS `4.4.0` added under `apps/api` (review). `minimumReleaseAge` unchanged. No other new packages.

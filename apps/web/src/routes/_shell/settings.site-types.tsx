@@ -14,6 +14,7 @@ import { isApiRequestError } from "@/api/mutator";
 import { Drawer } from "@/components/drawer";
 import { EmptyState } from "@/components/empty-state";
 import { FormField } from "@/components/form-field";
+import { MobileListCard, PrimaryNewButton, ResponsiveList } from "@/components/list-chrome";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -102,8 +103,10 @@ function SiteTypesSettingsPage() {
 
   return (
     <div>
-      <div className="mb-4 flex justify-end">
-        <Button onClick={() => setDrawerTarget({ mode: "create" })}>{t("types.newType")}</Button>
+      <div className="mb-5 flex justify-end">
+        <PrimaryNewButton onClick={() => setDrawerTarget({ mode: "create" })}>
+          {t("types.newType")}
+        </PrimaryNewButton>
       </div>
 
       {isLoading ? (
@@ -111,6 +114,8 @@ function SiteTypesSettingsPage() {
       ) : isError || items.length === 0 ? (
         <EmptyState message={t("types.empty")} />
       ) : (
+        <ResponsiveList
+          table={
         <Table>
           <TableHeader>
             <TableRow>
@@ -133,7 +138,7 @@ function SiteTypesSettingsPage() {
                   }
                 }}
               >
-                <TableCell>{row.name}</TableCell>
+                <TableCell className="font-medium text-[#0F172A]">{row.name}</TableCell>
                 <TableCell>
                   <StatusBadge variant={row.isActive ? "ok" : "neutral"}>
                     {row.isActive ? t("types.active") : t("types.inactive")}
@@ -143,6 +148,24 @@ function SiteTypesSettingsPage() {
             ))}
           </TableBody>
         </Table>
+          }
+          cards={
+          <ul className="space-y-3">
+            {items.map((row) => (
+              <li key={row.id}>
+                <MobileListCard onClick={() => setDrawerTarget({ mode: "edit", item: row })}>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="min-w-0 truncate font-semibold text-[#0F172A]">{row.name}</p>
+                    <StatusBadge variant={row.isActive ? "ok" : "neutral"}>
+                      {row.isActive ? t("types.active") : t("types.inactive")}
+                    </StatusBadge>
+                  </div>
+                </MobileListCard>
+              </li>
+            ))}
+          </ul>
+          }
+        />
       )}
 
       <Drawer

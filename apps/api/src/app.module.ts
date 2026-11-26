@@ -25,6 +25,12 @@ import { StorageModule } from "./storage/storage.module";
 import { SchedulingModule } from "./scheduling/scheduling.module";
 import { SubscriptionsModule } from "./subscriptions/subscriptions.module";
 import { UsersModule } from "./users/users.module";
+import { InvoicesModule } from "./invoices/invoices.module";
+import { PaymentsModule } from "./payments/payments.module";
+import { ProductsModule } from "./products/products.module";
+import { ComplianceModule } from "./compliance/compliance.module";
+import { NotificationsModule } from "./notifications/notifications.module";
+import { ReportsModule } from "./reports/reports.module";
 import { VisitsModule } from "./visits/visits.module";
 
 /** Paths redacted from structured logs (never log secrets / credentials). */
@@ -92,10 +98,16 @@ export const LOGGER_REDACT_PATHS = [
     AreasModule,
     ClientsModule,
     SiteTypesModule,
+    ProductsModule,
+    ComplianceModule,
+    NotificationsModule,
+    ReportsModule,
     SitesModule,
     SubscriptionsModule,
     SchedulingModule,
     VisitsModule,
+    InvoicesModule,
+    PaymentsModule,
     UsersModule,
     QueueModule,
     StorageModule,

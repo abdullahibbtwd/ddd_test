@@ -30,6 +30,7 @@ export type ClientPageDtoOutputItemsItem = {
   preferredPaymentMethod: ClientPageDtoOutputItemsItemPreferredPaymentMethod;
   /** @nullable */
   notes: string | null;
+  notifyByEmail: boolean;
   isActive: boolean;
   /**
    * @minimum 0

@@ -16,14 +16,14 @@
 
 ## 1. Where we are right now
 
-- **Done and accepted:** Platform foundation (Tasks 1 to 6) and Authentication (Task 7).
-- **Just finished (awaiting your acceptance):** Task 9 (user management, areas, Bull Board behind admin session).
-- **Next:** Phase 2 (clients and sites).
+- **Done through Task 16:** Platform, auth, users/areas, clients/sites, subscriptions/scheduling, visits, invoicing core, invoice documents.
+- **Just finished (awaiting your acceptance):** Task 17 / Phase 8 — payments, outstanding report, cash ledger, payment reminders.
+- **Next:** Phase 9 (products, service reports, NEOT/POT logs).
 - **Waiting on you:**
   - [ ] Push the repo to a private GitHub repository and confirm CI turns green (the CI file was only syntax-checked locally).
   - [ ] Look at `/dev/styleguide` (desktop and phone width) and approve or request design changes.
-  - [ ] Accept or request changes on Task 8 (audit log, CASL, Журнал screen).
-  - [ ] Send the client the open questions in section 6.
+  - [ ] Accept or request changes on Task 17 (payments).
+  - [ ] Send the client the open questions in section 6 (including Q20 on prepayment).
 
 ---
 
@@ -60,7 +60,7 @@
 | 5 | Visits and the field mobile experience | [ ] |
 | 6 | Invoicing core (gapless numbering, issue, immutability) | [ ] |
 | 7 | Invoice documents (PDF original/copy, email, credit/debit notes, batch invoicing) | [ ] |
-| 8 | Payments, outstanding balances, cash ledger | [ ] |
+| 8 | Payments, outstanding balances, cash ledger | [x] |
 | 9 | Products, service reports, NEOT/POT logs | [ ] |
 | 10 | Health certificates, agreements, food sampling (GDPR) | [ ] |
 | 11 | Notification engine (in-app and email) | [ ] |
@@ -265,6 +265,7 @@ Every line comes from the requirements document. "Target" is the phase where it 
 | 8 | Automatic reminder emails to clients too? | [ ] open | off by default, per-client switch |
 | 9 | How many years of history to migrate? | [ ] open | clients and sites only |
 | 10 | Hosting and data ownership requirements? | [ ] open | EU VPS |
+| 20 | Can a field employee record a payment before the invoice exists (prepayment), or is the payment always against an already-issued invoice? | [ ] open | always against an issued invoice; prepayment is a future feature |
 
 Also to confirm with the client's accountant: invoice format and legal wording, VAT handling, rounding rule, currency handling for older documents.
 

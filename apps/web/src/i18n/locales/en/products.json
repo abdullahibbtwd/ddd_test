@@ -1,0 +1,83 @@
+{
+  "title": "Products",
+  "emDash": "—",
+  "new": "New product",
+  "empty": "No products.",
+  "save": "Save",
+  "archive": "Archive",
+  "unarchive": "Restore",
+  "archived": "Archived",
+  "active": "Active",
+  "all": "All",
+  "searchPlaceholder": "Search by name or substance…",
+  "columns": {
+    "name": "Name",
+    "substances": "Active substances",
+    "formulation": "Formulation",
+    "permit": "Permit",
+    "archived": "Archived"
+  },
+  "fields": {
+    "name": "Name",
+    "activeSubstances": "Active substances",
+    "activeSubstancesHint": "One substance per line",
+    "formulation": "Formulation",
+    "permitNumber": "Permit no.",
+    "permitHolder": "Holder",
+    "antidote": "Antidote",
+    "ventilationPeriod": "Ventilation",
+    "exposurePeriod": "Exposure",
+    "recommendations": "Recommendations",
+    "defaultDosage": "Default dose",
+    "defaultUnit": "Unit"
+  },
+  "formulations": {
+    "LIQUID": "Liquid",
+    "POWDER": "Powder",
+    "GEL": "Gel",
+    "BAIT": "Bait",
+    "TRAP": "Trap",
+    "AEROSOL": "Aerosol",
+    "OTHER": "Other"
+  },
+  "units": {
+    "G": "g",
+    "KG": "kg",
+    "ML": "ml",
+    "L": "l",
+    "PIECE": "pcs"
+  },
+  "validation": {
+    "nameRequired": "Name must be at least 2 characters."
+  },
+  "visit": {
+    "section": "Products",
+    "add": "Add product",
+    "frozen": "Frozen after invoice issued",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "notes": "Notes",
+    "picker": "Product",
+    "remove": "Remove",
+    "empty": "No products added."
+  },
+  "points": {
+    "section": "NEOT/POT points",
+    "mark": "Mark inspections",
+    "unchecked": "Not checked",
+    "frozen": "Frozen after invoice issued",
+    "empty": "No active points for this site.",
+    "manage": "Manage points",
+    "count": "Points: {{count}}",
+    "status": {
+      "OK": "OK",
+      "ACTIVITY": "Activity",
+      "DAMAGED": "Damaged",
+      "MISSING": "Missing",
+      "OTHER": "Other"
+    }
+  },
+  "report": {
+    "download": "Download report"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "title": "Табло",
+  "sections": {
+    "today": "Днес",
+    "thisMonth": "Този месец",
+    "cashPosition": "Касова позиция",
+    "recentActivity": "Последни действия",
+    "systemHealth": "Състояние на системата",
+    "aging": "Вземания по давност",
+    "cashByEmployee": "Каса по служители",
+    "fieldSites": "Обекти за днес",
+    "notifications": "Непрочетени известия"
+  },
+  "kpi": {
+    "overdueInvoices": "Просрочени фактури",
+    "certsExpiring": "Сертификати ≤ 7 дни",
+    "agreementsExpiring": "Договори ≤ 7 дни",
+    "foodDue": "Графици храни",
+    "unreadNotifications": "Непрочетени известия"
+  },
+  "actions": {
+    "newInvoice": "Нова фактура",
+    "newSubscription": "Нов абонамент",
+    "addPayment": "Добави плащане",
+    "issueReport": "Издай доклад",
+    "startVisit": "Започни посещение"
+  },
+  "schedule": {
+    "totalSites": "{{count}} обекта",
+    "openMonth": "Отвори месеца"
+  },
+  "cash": {
+    "collected": "Събрани",
+    "handedOver": "Предадени",
+    "outstanding": "Непредадени",
+    "balance": "Текущ остатък",
+    "employee": "Служител",
+    "myOpen": "Моите открити плащания: {{amount}}"
+  },
+  "aging": {
+    "totalUnpaid": "Общо неплатени",
+    "bucket0_30": "0–30 дни",
+    "bucket31_60": "31–60 дни",
+    "bucket61_90": "61–90 дни",
+    "bucket90": "90+ дни",
+    "invoices": "{{count}} фактури",
+    "openReport": "Отвори задължения"
+  },
+  "health": {
+    "ok": "ОК",
+    "down": "Проблем",
+    "postgres": "База данни",
+    "redis": "Redis",
+    "garage": "Файлове",
+    "gotenberg": "PDF",
+    "lastChecked": "Проверено {{time}}"
+  },
+  "audit": {
+    "empty": "Няма скорошни действия.",
+    "system": "Система"
+  },
+  "field": {
+    "greeting": "Днес · {{count}} обекта",
+    "lastVisit": "Последно посещение: {{date}}",
+    "noSites": "Няма обекти за днес.",
+    "areaFallback": "Без район",
+    "openNotifications": "Виж всички",
+    "overdueBadge": "Просрочен",
+    "upcomingBadge": "Предстоящ",
+    "certAlert": "Сертификат: {{name}} · изтича на {{date}}"
+  },
+  "empty": "Няма данни за показване."
+}

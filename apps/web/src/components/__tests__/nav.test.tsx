@@ -32,16 +32,15 @@ vi.mock("@tanstack/react-router", async () => {
 });
 
 describe("NavList role filtering", () => {
-  it("renders only FIELD items for a FIELD user", () => {
+  it("renders only FIELD items for a FIELD user (no invoices)", () => {
     render(<NavList role={Role.FIELD} />);
     const nav = screen.getByRole("navigation", { name: "Основна навигация" });
     const links = within(nav).getAllByRole("link");
-    expect(links).toHaveLength(4);
+    expect(links).toHaveLength(3);
     expect(links.map((l) => l.textContent)).toEqual([
       i18n.t("sites", { ns: "nav" }),
       i18n.t("month", { ns: "nav" }),
-      i18n.t("invoices", { ns: "nav" }),
-      i18n.t("payments", { ns: "nav" }),
+      i18n.t("cash", { ns: "nav" }),
     ]);
   });
 

@@ -24,13 +24,20 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Drawer } from "@/components/drawer";
 import { EmptyState } from "@/components/empty-state";
 import { FilterBar } from "@/components/filter-bar";
+import {
+  ListSearchInput,
+  listFilterControlClass,
+  MobileListCard,
+  PrimaryNewButton,
+  ResponsiveList,
+  SoftPill,
+} from "@/components/list-chrome";
 import { FormField } from "@/components/form-field";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge } from "@/components/status-badge";
 import { TemporaryPasswordDialog } from "@/components/temporary-password-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -46,6 +53,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_shell/settings/users")({
   component: UsersSettingsPage,
@@ -242,85 +250,75 @@ function UsersSettingsPage() {
     <div>
       <FilterBar
         trailing={
-          <Button onClick={() => setDrawerTarget({ mode: "create" })}>{t("newUser")}</Button>
+          <PrimaryNewButton onClick={() => setDrawerTarget({ mode: "create" })}>
+            {t("newUser")}
+          </PrimaryNewButton>
         }
       >
-        <div className="space-y-1.5">
-          <Label htmlFor="users-search">{t("filters.search")}</Label>
-          <Input
-            id="users-search"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder={t("filters.searchPlaceholder")}
-            className="w-48"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.role")}</Label>
-          <Select
-            value={roleFilter || "__all"}
-            onValueChange={(v) => {
-              setRoleFilter(v === "__all" ? "" : v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-44">
-              <SelectValue placeholder={t("filters.roleAll")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all">{t("filters.roleAll")}</SelectItem>
-              {ROLES.map((r) => (
-                <SelectItem key={r} value={r}>
-                  {t(`roles.${r}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.status")}</Label>
-          <Select
-            value={statusFilter || "__all"}
-            onValueChange={(v) => {
-              setStatusFilter(v === "__all" ? "" : v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder={t("filters.statusAll")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all">{t("filters.statusAll")}</SelectItem>
-              <SelectItem value="active">{t("status.active")}</SelectItem>
-              <SelectItem value="inactive">{t("status.inactive")}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.area")}</Label>
-          <Select
-            value={areaFilter || "__all"}
-            onValueChange={(v) => {
-              setAreaFilter(v === "__all" ? "" : v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-44">
-              <SelectValue placeholder={t("filters.areaAll")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all">{t("filters.areaAll")}</SelectItem>
-              {areaOptions.map((a) => (
-                <SelectItem key={a.id} value={a.id}>
-                  {a.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <ListSearchInput
+          aria-label={t("filters.search")}
+          id="users-search"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          placeholder={t("filters.searchPlaceholder")}
+        />
+        <Select
+          value={roleFilter || "__all"}
+          onValueChange={(v) => {
+            setRoleFilter(v === "__all" ? "" : v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger aria-label={t("filters.role")} className={cn(listFilterControlClass, "w-full sm:w-44")}>
+            <SelectValue placeholder={t("filters.roleAll")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all">{t("filters.roleAll")}</SelectItem>
+            {ROLES.map((r) => (
+              <SelectItem key={r} value={r}>
+                {t(`roles.${r}`)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select
+          value={statusFilter || "__all"}
+          onValueChange={(v) => {
+            setStatusFilter(v === "__all" ? "" : v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger aria-label={t("filters.status")} className={cn(listFilterControlClass, "w-full sm:w-40")}>
+            <SelectValue placeholder={t("filters.statusAll")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all">{t("filters.statusAll")}</SelectItem>
+            <SelectItem value="active">{t("status.active")}</SelectItem>
+            <SelectItem value="inactive">{t("status.inactive")}</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={areaFilter || "__all"}
+          onValueChange={(v) => {
+            setAreaFilter(v === "__all" ? "" : v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger aria-label={t("filters.area")} className={cn(listFilterControlClass, "w-full sm:w-44")}>
+            <SelectValue placeholder={t("filters.areaAll")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all">{t("filters.areaAll")}</SelectItem>
+            {areaOptions.map((a) => (
+              <SelectItem key={a.id} value={a.id}>
+                {a.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </FilterBar>
 
       {isLoading ? (
@@ -331,6 +329,8 @@ function UsersSettingsPage() {
         <EmptyState message={t("empty")} />
       ) : (
         <>
+          <ResponsiveList
+            table={
           <Table>
             <TableHeader>
               <TableRow>
@@ -361,7 +361,9 @@ function UsersSettingsPage() {
                     <span className="block font-medium">{row.name}</span>
                     <span className="block text-xs text-ink-muted">{row.email}</span>
                   </TableCell>
-                  <TableCell>{t(`roles.${row.role}`)}</TableCell>
+                  <TableCell>
+                      <SoftPill>{t(`roles.${row.role}`)}</SoftPill>
+                    </TableCell>
                   <TableCell>{areasCellLabel(row, t)}</TableCell>
                   <TableCell numeric className="hidden sm:table-cell">
                     {formatPhoneCell(row.phone, t("emDash"))}
@@ -378,6 +380,37 @@ function UsersSettingsPage() {
               ))}
             </TableBody>
           </Table>
+            }
+            cards={
+            <ul className="space-y-3">
+              {items.map((row) => (
+                <li key={row.id}>
+                  <MobileListCard onClick={() => setDrawerTarget({ mode: "edit", item: row })}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-[#0F172A]">{row.name}</p>
+                        <p className="truncate text-xs text-ink-muted">{row.email}</p>
+                      </div>
+                      <StatusBadge variant={row.isActive ? "ok" : "neutral"}>
+                        {row.isActive ? t("status.active") : t("status.inactive")}
+                      </StatusBadge>
+                    </div>
+                    <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                      <SoftPill>{t(`roles.${row.role}`)}</SoftPill>
+                      <span className="truncate text-xs text-[#64748B]">
+                        {areasCellLabel(row, t)}
+                      </span>
+                    </div>
+                    <div className="mt-2.5 flex items-center justify-between gap-3 text-xs tabular-nums text-[#94A3B8]">
+                      <span>{formatPhoneCell(row.phone, t("emDash"))}</span>
+                      <span>{formatLastLogin(row.lastLoginAt, t("emDash"))}</span>
+                    </div>
+                  </MobileListCard>
+                </li>
+              ))}
+            </ul>
+            }
+          />
           <Pagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />
         </>
       )}

@@ -5,10 +5,13 @@
   "sites": "Обекти",
   "month": "Този месец",
   "visits": "Посещения",
+  "products": "Препарати",
   "invoices": "Фактури",
   "payments": "Плащания",
+  "cash": "Каса",
   "certificates": "Сертификати",
   "agreements": "Договори",
+  "food": "ХВП",
   "reports": "Справки",
   "settings": "Настройки"
 }

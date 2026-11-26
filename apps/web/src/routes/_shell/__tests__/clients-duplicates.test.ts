@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildDuplicateUiState } from "../clients-duplicates";
+import { buildDuplicateUiState } from "../-clients-duplicates";
 
 describe("buildDuplicateUiState", () => {
   it("blocks save on SAME_EIK and keeps up to 3 similar names", () => {

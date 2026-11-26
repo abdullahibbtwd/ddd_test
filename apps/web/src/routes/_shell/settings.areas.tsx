@@ -15,13 +15,19 @@ import { isApiRequestError } from "@/api/mutator";
 import { Drawer } from "@/components/drawer";
 import { EmptyState } from "@/components/empty-state";
 import { FilterBar } from "@/components/filter-bar";
+import {
+  ListSearchInput,
+  listFilterControlClass,
+  MobileListCard,
+  PrimaryNewButton,
+  ResponsiveList,
+} from "@/components/list-chrome";
 import { FormField } from "@/components/form-field";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -37,6 +43,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_shell/settings/areas")({
   component: AreasSettingsPage,
@@ -130,41 +137,37 @@ function AreasSettingsPage() {
     <div>
       <FilterBar
         trailing={
-          <Button onClick={() => setDrawerTarget({ mode: "create" })}>{t("newArea")}</Button>
+          <PrimaryNewButton onClick={() => setDrawerTarget({ mode: "create" })}>
+            {t("newArea")}
+          </PrimaryNewButton>
         }
       >
-        <div className="space-y-1.5">
-          <Label htmlFor="areas-search">{t("filters.search")}</Label>
-          <Input
-            id="areas-search"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder={t("filters.searchPlaceholder")}
-            className="w-48"
-          />
-        </div>
-        <div className="space-y-1.5">
-          <Label>{t("filters.status")}</Label>
-          <Select
-            value={statusFilter || "__all"}
-            onValueChange={(v) => {
-              setStatusFilter(v === "__all" ? "" : v);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder={t("filters.statusAll")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all">{t("filters.statusAll")}</SelectItem>
-              <SelectItem value="active">{t("filters.active")}</SelectItem>
-              <SelectItem value="inactive">{t("filters.inactive")}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <ListSearchInput
+          aria-label={t("filters.search")}
+          id="areas-search"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          placeholder={t("filters.searchPlaceholder")}
+        />
+        <Select
+          value={statusFilter || "__all"}
+          onValueChange={(v) => {
+            setStatusFilter(v === "__all" ? "" : v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger aria-label={t("filters.status")} className={cn(listFilterControlClass, "w-full sm:w-40")}>
+            <SelectValue placeholder={t("filters.statusAll")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all">{t("filters.statusAll")}</SelectItem>
+            <SelectItem value="active">{t("filters.active")}</SelectItem>
+            <SelectItem value="inactive">{t("filters.inactive")}</SelectItem>
+          </SelectContent>
+        </Select>
       </FilterBar>
 
       {isLoading ? (
@@ -175,6 +178,8 @@ function AreasSettingsPage() {
         <EmptyState message={t("empty")} />
       ) : (
         <>
+          <ResponsiveList
+            table={
           <Table>
             <TableHeader>
               <TableRow>
@@ -198,7 +203,7 @@ function AreasSettingsPage() {
                   tabIndex={0}
                   role="button"
                 >
-                  <TableCell>{row.name}</TableCell>
+                  <TableCell className="font-medium text-[#0F172A]">{row.name}</TableCell>
                   <TableCell numeric className="num">
                     {row.userCount ?? 0}
                   </TableCell>
@@ -211,6 +216,27 @@ function AreasSettingsPage() {
               ))}
             </TableBody>
           </Table>
+            }
+            cards={
+            <ul className="space-y-3">
+              {items.map((row) => (
+                <li key={row.id}>
+                  <MobileListCard onClick={() => setDrawerTarget({ mode: "edit", item: row })}>
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="min-w-0 truncate font-semibold text-[#0F172A]">{row.name}</p>
+                      <StatusBadge variant={row.isActive ? "ok" : "neutral"}>
+                        {row.isActive ? t("status.active") : t("status.inactive")}
+                      </StatusBadge>
+                    </div>
+                    <p className="mt-2 text-xs tabular-nums text-[#64748B]">
+                      {t("columns.users")}: {row.userCount ?? 0}
+                    </p>
+                  </MobileListCard>
+                </li>
+              ))}
+            </ul>
+            }
+          />
           <Pagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />
         </>
       )}

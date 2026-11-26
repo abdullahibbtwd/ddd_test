@@ -19,11 +19,15 @@ import { useUsersControllerList } from "@/api/generated/users/users";
 import { Drawer } from "@/components/drawer";
 import { EmptyState } from "@/components/empty-state";
 import { FilterBar } from "@/components/filter-bar";
+import {
+  listFilterControlClass,
+  MobileListCard,
+  ResponsiveList,
+} from "@/components/list-chrome";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge, type StatusVariant } from "@/components/status-badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -185,26 +189,27 @@ function MonthPage() {
       <PageHeader title={t("title")} description={t("description")} />
 
       <FilterBar className="flex-wrap" data-testid="month-filters">
-        <div className="space-y-1.5">
-          <Label htmlFor="month-picker">{t("filters.month")}</Label>
-          <Input
-            id="month-picker"
-            data-testid="month-picker"
-            type="month"
-            value={month}
-            onChange={(e) => patchSearch({ month: e.target.value, page: 1 })}
-          />
-        </div>
+        <Input
+          aria-label={t("filters.month")}
+          id="month-picker"
+          data-testid="month-picker"
+          className={cn(listFilterControlClass, "w-full sm:w-44")}
+          type="month"
+          value={month}
+          onChange={(e) => patchSearch({ month: e.target.value, page: 1 })}
+        />
         {!isField ? (
-          <div className="space-y-1.5" data-testid="month-area-filter">
-            <Label>{t("filters.area")}</Label>
+          <div data-testid="month-area-filter" className="contents">
             <Select
               value={areaId || "__all__"}
               onValueChange={(v) =>
                 patchSearch({ areaId: v === "__all__" ? undefined : v, page: 1 })
               }
             >
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger
+                aria-label={t("filters.area")}
+                className={cn(listFilterControlClass, "w-full sm:w-[200px]")}
+              >
                 <SelectValue placeholder={t("filters.areaAll")} />
               </SelectTrigger>
               <SelectContent>
@@ -219,8 +224,7 @@ function MonthPage() {
           </div>
         ) : null}
         {showEmployee ? (
-          <div className="space-y-1.5" data-testid="month-employee-filter">
-            <Label>{t("filters.employee")}</Label>
+          <div data-testid="month-employee-filter" className="contents">
             <Select
               value={employeeId || "__all__"}
               onValueChange={(v) =>
@@ -230,7 +234,10 @@ function MonthPage() {
                 })
               }
             >
-              <SelectTrigger className="w-[220px]">
+              <SelectTrigger
+                aria-label={t("filters.employee")}
+                className={cn(listFilterControlClass, "w-full sm:w-[220px]")}
+              >
                 <SelectValue placeholder={t("filters.employeeAll")} />
               </SelectTrigger>
               <SelectContent>
@@ -299,6 +306,8 @@ function MonthPage() {
           ) : (
             <>
               <div data-testid="month-table">
+              <ResponsiveList
+                table={
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -315,11 +324,11 @@ function MonthPage() {
                   {rows.map((row) => (
                     <TableRow
                       key={row.siteId}
-                      className="cursor-pointer"
+                      interactive
                       data-testid={`month-row-${row.siteId}`}
                       onClick={() => openSite(row.siteId)}
                     >
-                      <TableCell>{row.siteName}</TableCell>
+                      <TableCell className="font-medium text-[#0F172A]">{row.siteName}</TableCell>
                       <TableCell>{row.clientName}</TableCell>
                       <TableCell>{row.areaName}</TableCell>
                       <TableCell>
@@ -342,6 +351,40 @@ function MonthPage() {
                   ))}
                 </TableBody>
               </Table>
+                }
+                cards={
+                <ul className="space-y-3">
+                  {rows.map((row) => (
+                    <li key={row.siteId}>
+                      <MobileListCard
+                        data-testid={`month-card-${row.siteId}`}
+                        onClick={() => openSite(row.siteId)}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="min-w-0 truncate font-semibold text-[#0F172A]">
+                            {row.siteName}
+                          </p>
+                          <StatusBadge variant={statusBadgeVariant(row.status)}>
+                            {t(`status.${row.status}`)}
+                          </StatusBadge>
+                        </div>
+                        <p className="mt-1.5 truncate text-sm text-[#64748B]">
+                          {row.clientName} · {row.areaName}
+                        </p>
+                        <div className="mt-2.5 flex items-center justify-between gap-3 text-xs tabular-nums text-[#64748B]">
+                          <span>
+                            {t("columns.lastVisit")}: {row.lastVisitDate ?? t("emDash")}
+                          </span>
+                          <span>
+                            {t("columns.nextDue")}: {row.nextDueMonth ?? t("emDash")}
+                          </span>
+                        </div>
+                      </MobileListCard>
+                    </li>
+                  ))}
+                </ul>
+                }
+              />
               </div>
               <Pagination
                 page={page}

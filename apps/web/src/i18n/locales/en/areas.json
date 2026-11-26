@@ -1,0 +1,31 @@
+{
+  "tab": "Areas",
+  "empty": "No areas.",
+  "newArea": "New area",
+  "filters": {
+    "search": "Search",
+    "searchPlaceholder": "Area name",
+    "status": "Status",
+    "statusAll": "All",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "columns": {
+    "name": "Name",
+    "users": "Users",
+    "status": "Status"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "drawer": {
+    "createTitle": "New area",
+    "editTitle": "Edit area",
+    "name": "Name",
+    "active": "Active",
+    "assignedUsers": "Assigned users",
+    "noAssignedUsers": "No assigned users.",
+    "userRole": "({{role}})"
+  }
+}

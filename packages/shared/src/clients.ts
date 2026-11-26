@@ -133,6 +133,8 @@ export const ClientItemSchema = z.object({
   email: z.string().nullable(),
   preferredPaymentMethod: PaymentMethodSchema.nullable(),
   notes: z.string().nullable(),
+  /** When true, agreement-expiry emails may be sent to this client's email. Default off. */
+  notifyByEmail: z.boolean(),
   isActive: z.boolean(),
   /** Count of sites with status ACTIVE for this client. */
   activeSiteCount: z.number().int().nonnegative(),
@@ -209,6 +211,7 @@ const CreateClientBaseSchema = z.object({
   email: optionalEmailSchema,
   preferredPaymentMethod: PaymentMethodSchema.nullable().optional(),
   notes: optionalText(2000),
+  notifyByEmail: z.boolean().optional(),
 });
 
 export const CreateClientBodySchema = CreateClientBaseSchema.superRefine((value, ctx) => {

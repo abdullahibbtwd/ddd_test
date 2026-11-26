@@ -1,0 +1,47 @@
+{
+  "title": "Visits",
+  "new": "New visit",
+  "editTitle": "Edit visit",
+  "createTitle": "New visit",
+  "empty": "No visits recorded.",
+  "cancelled": "Cancelled",
+  "save": "Save",
+  "cancelVisit": "Cancel visit",
+  "cancelTitle": "Cancel visit?",
+  "cancelDescription": "The visit will remain in the history but will be marked as cancelled.",
+  "cancelReason": "Reason",
+  "cancelReasonRequired": "Enter a reason (at least 3 characters).",
+  "cancelConfirm": "Cancel visit",
+  "fields": {
+    "site": "Site",
+    "date": "Date",
+    "treatmentType": "Service type",
+    "employees": "Employees",
+    "amount": "Amount",
+    "rateIncludesVat": "Amount includes VAT",
+    "notes": "Notes"
+  },
+  "treatmentTypes": {
+    "INSECT_CONTROL": "Insect control",
+    "RODENT_CONTROL": "Rodent control",
+    "DISINFECTION": "Disinfection",
+    "OTHER": "Other"
+  },
+  "roles": {
+    "LEAD": "Lead",
+    "ASSIST": "Assistant"
+  },
+  "validation": {
+    "amountRequired": "Enter an amount for a one-time visit.",
+    "amountInvalid": "Enter a valid amount.",
+    "dateRequired": "Date is required.",
+    "leadRequired": "There must be exactly one lead employee.",
+    "employeesRequired": "Select at least one employee."
+  },
+  "fromSubscription": "Copied from the current subscription",
+  "leadSuffix": "({{role}})",
+  "loading": "…",
+  "notFound": "The visit was not found.",
+  "siteNotFound": "The site was not found.",
+  "back": "Back"
+}

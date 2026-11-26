@@ -40,6 +40,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { translateApiError } from "@/lib/error-message";
 import { cn } from "@/lib/utils";
+import { VisitProductsPanel } from "./-visit-products-panel";
 
 const ALL_TYPES = Object.values(ServiceType) as ServiceTypeT[];
 
@@ -402,6 +403,9 @@ export function VisitForm({ mode, siteId, visit }: VisitFormProps) {
         </FormField>
       </ConfirmDialog>
 
+      {mode === "edit" && visit && !cancelled ? (
+        <VisitProductsPanel visitId={visit.id} siteId={siteId} />
+      ) : null}
     </div>
   );
 }

@@ -1,0 +1,56 @@
+{
+  "title": "Certificates",
+  "emDash": "—",
+  "sep": " · ",
+  "rangeArrow": " → ",
+  "newEmployee": "New employee",
+  "empty": "No employees with certificates.",
+  "save": "Save",
+  "addCertificate": "New certificate",
+  "download": "Download",
+  "export": "Export",
+  "erase": "Anonymize",
+  "eraseTitle": "Anonymize employee",
+  "eraseBody": "Personal data will be replaced with “[deleted]”. Certificate history is kept. This action cannot be undone.",
+  "eraseReason": "Reason",
+  "eraseReasonRequired": "Provide a reason (at least 3 characters).",
+  "eraseConfirm": "Anonymize",
+  "cancel": "Cancel",
+  "filters": {
+    "status": "Status",
+    "allStatuses": "All",
+    "expiringWithin": "Expiring within days",
+    "client": "Client",
+    "site": "Site"
+  },
+  "columns": {
+    "name": "Name",
+    "jobTitle": "Job title",
+    "client": "Client",
+    "site": "Site",
+    "status": "Status",
+    "nextRenewal": "Renewal"
+  },
+  "fields": {
+    "fullName": "Name",
+    "jobTitle": "Job title",
+    "client": "Client",
+    "site": "Site",
+    "notes": "Notes",
+    "lastCertifiedAt": "Last certified",
+    "nextRenewalAt": "Next renewal",
+    "history": "Certificate history"
+  },
+  "status": {
+    "CURRENT": "Current",
+    "EXPIRING": "Expiring",
+    "EXPIRED": "Expired"
+  },
+  "toast": {
+    "created": "Employee created.",
+    "updated": "Record saved.",
+    "certificateCreated": "Certificate added.",
+    "erased": "Data anonymized.",
+    "exported": "Export downloaded."
+  }
+}

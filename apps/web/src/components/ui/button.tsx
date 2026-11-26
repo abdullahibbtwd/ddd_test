@@ -14,14 +14,15 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         /** Accent is reserved for primary actions. */
-        primary: "bg-accent text-on-accent hover:bg-accent-hover",
-        secondary: "border border-border bg-surface text-ink hover:bg-bg",
-        ghost: "bg-transparent text-ink hover:bg-neutral-bg",
+        primary: "bg-[#14452F] text-[#ffffff] hover:bg-[#165239]",
+        secondary:
+          "border border-[#E2E8F0] bg-[#ffffff] text-[#0F172A] hover:bg-[#F8FAFC]",
+        ghost: "bg-transparent text-[#0F172A] hover:bg-[#F1F5F9]",
       },
       size: {
-        md: "h-9 px-4",
-        sm: "h-8 px-3",
-        icon: "size-9",
+        md: "h-10 rounded-lg px-4",
+        sm: "h-8 rounded-md px-3",
+        icon: "size-10 rounded-lg",
       },
     },
     defaultVariants: { variant: "primary", size: "md" },

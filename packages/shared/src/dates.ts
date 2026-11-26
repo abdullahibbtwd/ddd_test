@@ -65,6 +65,22 @@ export function addMonths(month: string, n: number): string {
   return `${String(ny).padStart(4, "0")}-${String(nm).padStart(2, "0")}`;
 }
 
+/**
+ * Add n calendar months to a 'YYYY-MM-DD' date.
+ * Day-of-month is clamped to the last day of the target month
+ * (matches Postgres `date + n * interval '1 month'`).
+ */
+export function addCalendarMonths(date: string, n: number): string {
+  assertDate(date);
+  const [y, m, d] = date.split("-").map(Number) as [number, number, number];
+  const idx = y * 12 + (m - 1) + n;
+  const ny = Math.floor(idx / 12);
+  const nm = (idx % 12) + 1;
+  const lastDay = new Date(Date.UTC(ny, nm, 0)).getUTCDate();
+  const dd = Math.min(d, lastDay);
+  return `${String(ny).padStart(4, "0")}-${String(nm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
+}
+
 /** Month difference: monthDiff(a, b) = months from b to a (a − b). */
 export function monthDiff(a: string, b: string): number {
   assertMonth(a);

@@ -45,6 +45,14 @@ async function openClients(page: Page, isPhone: boolean) {
   await expect(page.getByRole("heading", { level: 1, name: "Клиенти" })).toBeVisible();
 }
 
+/** Desktop table cell or mobile card button. */
+function clientListItem(page: Page, name: string, isPhone: boolean) {
+  if (isPhone) {
+    return page.getByRole("button", { name: new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")) });
+  }
+  return page.getByRole("cell", { name, exact: true });
+}
+
 async function fillCompanyForm(
   drawer: ReturnType<Page["getByRole"]>,
   opts: { name: string; eik: string },
@@ -78,7 +86,7 @@ test.describe("Task 10: clients", () => {
     await createDrawer.getByRole("button", { name: "Запази" }).click();
     await expect(createDrawer).toHaveCount(0);
     await page.getByLabel("Търсене").fill(companyName);
-    await expect(page.getByRole("cell", { name: companyName })).toBeVisible({ timeout: 15_000 });
+    await expect(clientListItem(page, companyName, isPhone)).toBeVisible({ timeout: 15_000 });
 
     // Same EIK → inline error + disabled save
     await page.getByRole("button", { name: "Нов клиент" }).click();
@@ -101,13 +109,13 @@ test.describe("Task 10: clients", () => {
     await similarDrawer.getByRole("button", { name: "Запази" }).click();
     await expect(similarDrawer).toHaveCount(0);
     await page.getByLabel("Търсене").fill(similarName);
-    await expect(page.getByRole("cell", { name: similarName, exact: true })).toBeVisible({
+    await expect(clientListItem(page, similarName, isPhone)).toBeVisible({
       timeout: 15_000,
     });
 
     // Edit + archive
     await page.getByLabel("Търсене").fill(companyName);
-    await page.getByRole("cell", { name: companyName, exact: true }).click();
+    await clientListItem(page, companyName, isPhone).click();
     const editDrawer = page.getByRole("dialog", { name: "Редакция на клиент" });
     await expect(editDrawer).toBeVisible();
     await editDrawer.getByLabel(/Наименование/).fill(`${companyName} редакция`);
@@ -116,17 +124,17 @@ test.describe("Task 10: clients", () => {
 
     const editedName = `${companyName} редакция`;
     await page.getByLabel("Търсене").fill(editedName);
-    await page.getByRole("cell", { name: editedName }).click();
+    await clientListItem(page, editedName, isPhone).click();
     const archiveDrawer = page.getByRole("dialog", { name: "Редакция на клиент" });
     await archiveDrawer.getByRole("button", { name: "Архивирай" }).click();
     await page.getByRole("button", { name: "Потвърди" }).click();
     await expect(archiveDrawer).toHaveCount(0);
 
     await page.getByLabel("Търсене").fill("");
-    await page.getByRole("combobox").nth(1).click();
+    await page.getByLabel("Статус").click();
     await page.getByRole("option", { name: "Архивирани" }).click();
     await page.getByLabel("Търсене").fill(editedName);
-    await expect(page.getByRole("cell", { name: editedName })).toBeVisible({
+    await expect(clientListItem(page, editedName, isPhone)).toBeVisible({
       timeout: 15_000,
     });
   });
